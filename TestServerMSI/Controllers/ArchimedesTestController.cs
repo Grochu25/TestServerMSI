@@ -19,7 +19,7 @@ namespace TestServerMSI.Controllers
         {
             AOA archimedes = new AOA();
             double[,] domain = { { -10, -10, -10 }, { 10, 10, 10 } };
-            archimedes.Solve(TestFunctions.sphere, domain, 30, 200, 2.0, 4.0, 1.0, 0.5);
+            archimedes.Solve(new SphereTestFunction().invoke, domain, 30, 200, 2.0, 4.0, 1.0, 0.5);
             return Ok(archimedes);
         }
     }
