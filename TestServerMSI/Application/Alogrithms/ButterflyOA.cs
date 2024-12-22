@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using TestServerMSI.Appliaction.Interfaces;
 using TestServerMSI.Appliaction.Services;
 
@@ -73,6 +74,7 @@ namespace TestServerMSI.Appliaction.Alogrithms
                 this.Eval();
                 this.MoveButterflies();
                 this.ClipButterflies();
+                Debug.WriteLine(i);
             }
             this.Eval();
             this.XBest = this.bestButterfly.X;
@@ -112,7 +114,7 @@ namespace TestServerMSI.Appliaction.Alogrithms
             this.butterflies = new Butterfly[(int)this.population];
             for (uint i = 0; i < this.population; ++i)
             {
-                this.butterflies[i].X = this.RandomPointInDiemnsions();
+                this.butterflies[i] = new Butterfly(this.RandomPointInDiemnsions());
             }
             this.butterflies.ToList();
         }
