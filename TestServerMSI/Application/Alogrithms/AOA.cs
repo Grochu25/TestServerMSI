@@ -1,4 +1,5 @@
-﻿using TestServerMSI.Appliaction.Interfaces;
+﻿using System.Diagnostics;
+using TestServerMSI.Appliaction.Interfaces;
 using TestServerMSI.Appliaction.Services;
 
 namespace TestServerMSI.Appliaction.Alogrithms
@@ -129,7 +130,7 @@ namespace TestServerMSI.Appliaction.Alogrithms
             evaluate();
             double TF = 0.0;
             double d = 0.0;
-            for (double t = 1.0; t <= iterations; t += 1.0)
+            for (double t = NumberOfEvaluationFitnessFunction + 1.0; t <= iterations; t += 1.0)
             {
                 TF = Math.Exp((t - iterations) / iterations);
                 TF = (TF > 1) ? 1 : TF;
@@ -150,6 +151,7 @@ namespace TestServerMSI.Appliaction.Alogrithms
                 XBest = bestObject.X;
                 FBest = f(XBest);
                 NumberOfEvaluationFitnessFunction++;
+                Debug.WriteLine(NumberOfEvaluationFitnessFunction+" : "+t);
             }
         }
 

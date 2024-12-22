@@ -4,7 +4,15 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <OutputType>Exe</OutputType>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Appliaction\**" />
+    <Content Remove="Appliaction\**" />
+    <EmbeddedResource Remove="Appliaction\**" />
+    <None Remove="Appliaction\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />

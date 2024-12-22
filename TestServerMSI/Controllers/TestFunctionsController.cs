@@ -3,6 +3,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Reflection;
 using TestServerMSI.Appliaction.Interfaces;
+using TestServerMSI.Application.TestFunctions;
 
 namespace TestServerMSI.Controllers
 {
@@ -10,24 +11,28 @@ namespace TestServerMSI.Controllers
     [Route("[controller]")]
     public class TestFunctionsController : ControllerBase
     {
+        List<ITestFunction> testFunctions;
+        List<string> testNames;
+
+        public TestFunctionsController()
+        { 
+            testFunctions = TestFunctions.getTestFunctionList();
+            testNames = new List<string>(testFunctions.Select(x => x.Name));
+        }
+
         [HttpGet]
         public IActionResult Get()
         {
-            List<Type> q = new List<Type>(from t in Assembly.GetExecutingAssembly().GetTypes()
-                                              where t.IsClass && t.Namespace == "TestServerMSI.Appliaction.TestFunctions"
-                                              && t.GetInterface("ITestFunction", true) != null
-                                              select t);
-            List<ITestFunction> tests = new List<ITestFunction>();
-            foreach (var t in q)
-            {
-                var instance = Activator.CreateInstance(t);
-                if(instance is ITestFunction)
-                    tests.Add((ITestFunction)instance);
-            }
-            List<string> testNames = new List<string>(tests.Select(x => x.Name));
+            return Ok(testFunctions);
+        }
 
-            Debug.WriteLine(q.GetType());
-            return Ok(testNames);
+        [HttpGet("{name}")]
+        public IActionResult Get(string name)
+        {
+            var testFunction = TestFunctions.getTestFunction(name);
+            if (testFunction == null)
+                return NotFound();
+            return Ok(testFunction);
         }
     }
 }
