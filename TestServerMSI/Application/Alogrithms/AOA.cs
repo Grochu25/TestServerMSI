@@ -151,8 +151,11 @@ namespace TestServerMSI.Appliaction.Alogrithms
                 XBest = bestObject.X;
                 FBest = f(XBest);
                 NumberOfEvaluationFitnessFunction++;
-                Debug.WriteLine(NumberOfEvaluationFitnessFunction+" : "+t);
+                writer.SaveToFileStateOfAlghoritm("savedAlgorithms/AOA" + population + iterations + C1 + C2 + C3 + C4 + ".alg");
+                Debug.WriteLine("test run: "+NumberOfEvaluationFitnessFunction);
             }
+            if(File.Exists("savedAlgorithms/AOA" + population + iterations + C1 + C2 + C3 + C4 + ".alg"))
+                File.Delete("savedAlgorithms/AOA" + population + iterations + C1 + C2 + C3 + C4 + ".alg");
         }
 
         private void countAccForExploration()

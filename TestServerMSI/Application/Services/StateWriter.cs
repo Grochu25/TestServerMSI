@@ -7,7 +7,8 @@ namespace TestServerMSI.Appliaction.Services
         public StateWriter() { }
         public void SaveToFileStateOfAlghoritm(string path)
         {
-            throw new NotImplementedException();
+            var stream = File.OpenWrite(path);
+            stream.Close();
         }
     }
 }

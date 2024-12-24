@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using TestServerMSI.Appliaction.Alogrithms;
 using TestServerMSI.Appliaction.Interfaces;
 using TestServerMSI.Appliaction.TestFunctions;
@@ -35,6 +36,7 @@ namespace TestServerMSI.Controllers
                     if(TestFunctions.getTestFunction(func) != null)
                         tests.Add(TestFunctions.getTestFunction(func));
 
+                Debug.WriteLine("TESTS " + tests.Count);
                 CalculationProcessor.Instance.oneAlgorithmManyFunctions(algorithm,
                     oamf.domainAsMulti(), oamf.Parameters, tests.ToArray());
             }
