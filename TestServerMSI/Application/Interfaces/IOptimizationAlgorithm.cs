@@ -1,4 +1,4 @@
-﻿namespace TestServerMSI.Appliaction.Interfaces
+﻿namespace TestServerMSI.Application.Interfaces
 {
     public interface IOptimizationAlgorithm
     {

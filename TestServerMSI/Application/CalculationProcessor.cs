@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
-using TestServerMSI.Appliaction.Interfaces;
+using TestServerMSI.Application.Interfaces;
 using TestServerMSI.Application.Alogrithms;
 using TestServerMSI.Application.TestFunctions;
 

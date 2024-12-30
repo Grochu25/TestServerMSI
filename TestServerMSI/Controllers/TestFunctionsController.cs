@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Diagnostics;
 using System.Reflection;
-using TestServerMSI.Appliaction.Interfaces;
+using TestServerMSI.Application.Interfaces;
 using TestServerMSI.Application.TestFunctions;
 
 namespace TestServerMSI.Controllers

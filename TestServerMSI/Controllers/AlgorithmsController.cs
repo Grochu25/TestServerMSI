@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using TestServerMSI.Appliaction.Interfaces;
+using TestServerMSI.Application.Interfaces;
 using TestServerMSI.Application.Alogrithms;
 
 namespace TestServerMSI.Controllers

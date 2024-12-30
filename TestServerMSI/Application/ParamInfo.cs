@@ -1,4 +1,4 @@
-﻿namespace TestServerMSI.Appliaction
+﻿namespace TestServerMSI.Application
 {
     public delegate double fitnessFunction(params double[] arg);
 

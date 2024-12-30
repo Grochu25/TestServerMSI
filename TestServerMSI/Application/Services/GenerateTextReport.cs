@@ -1,6 +1,6 @@
-﻿using TestServerMSI.Appliaction.Interfaces;
+﻿using TestServerMSI.Application.Interfaces;
 
-namespace TestServerMSI.Appliaction.Services
+namespace TestServerMSI.Application.Services
 {
     public class GenerateTextReport : IGenerateTextReport
     {

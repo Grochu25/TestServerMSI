@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
-using TestServerMSI.Appliaction.Interfaces;
+using TestServerMSI.Application.Interfaces;
 
 namespace TestServerMSI.Application.Alogrithms
 {

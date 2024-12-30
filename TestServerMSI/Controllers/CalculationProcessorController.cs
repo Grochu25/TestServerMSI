@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using TestServerMSI.Appliaction.Alogrithms;
-using TestServerMSI.Appliaction.Interfaces;
-using TestServerMSI.Appliaction.TestFunctions;
+using TestServerMSI.Application.Alogrithms;
+using TestServerMSI.Application.Interfaces;
+using TestServerMSI.Application.TestFunctions;
 using TestServerMSI.Application;
 using TestServerMSI.Application.Alogrithms;
 using TestServerMSI.Application.DTO;
@@ -14,15 +14,28 @@ namespace TestServerMSI.Controllers
     [Route("[controller]")]
     public class CalculationProcessorController : ControllerBase
     {
-        [HttpGet("results")]
-        public IActionResult Get()
+        [HttpGet("{command}")]
+        public IActionResult Get(string command)
         {
-            if (CalculationProcessor.Instance.CalculationsInProgress)
-                return Ok("In progress");
-            else
+            switch(command)
             {
-                return Ok(CalculationProcessor.Instance);
+                case "result":
+                    if (CalculationProcessor.Instance.CalculationsInProgress)
+                        return Ok("In progress");
+                    else
+                    {
+                        return Ok(CalculationProcessor.Instance.reports);
+                    }
+                case "stop":
+                    return Ok("Zaimplementować przerwanie");
+                case "resume":
+                    return Ok("Zaimplementować wznowienie");
+                case "last":
+                    return Ok("pokazać ostatnią próbę");
+                default:
+                    return NotFound();
             }
+            
         }
 
         [HttpPost("oneAlgorithmManyFunctions")]

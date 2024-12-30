@@ -1,8 +1,8 @@
 using System.Diagnostics;
-using TestServerMSI.Appliaction.Interfaces;
-using TestServerMSI.Appliaction.Services;
+using TestServerMSI.Application.Interfaces;
+using TestServerMSI.Application.Services;
 
-namespace TestServerMSI.Appliaction.Alogrithms
+namespace TestServerMSI.Application.Alogrithms
 {
     public class ButterflyOptimizationAlgorithm : IOptimizationAlgorithm
     {

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
-using TestServerMSI.Appliaction.Interfaces;
+using TestServerMSI.Application.Interfaces;
 
 namespace TestServerMSI.Application.TestFunctions
 {
@@ -9,7 +9,7 @@ namespace TestServerMSI.Application.TestFunctions
         public static List<ITestFunction> getTestFunctionList()
         {
             List<Type> types = new List<Type>(from t in Assembly.GetExecutingAssembly().GetTypes()
-                                          where t.IsClass && t.Namespace == "TestServerMSI.Appliaction.TestFunctions"
+                                          where t.IsClass && t.Namespace == "TestServerMSI.Application.TestFunctions"
                                           && t.GetInterface("ITestFunction", true) != null
                                           select t);
             List<ITestFunction> testFunctions = new List<ITestFunction>();

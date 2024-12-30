@@ -1,4 +1,4 @@
-﻿using TestServerMSI.Appliaction.Interfaces;
+﻿using TestServerMSI.Application.Interfaces;
 
 namespace TestServerMSI.Application.DTO
 {

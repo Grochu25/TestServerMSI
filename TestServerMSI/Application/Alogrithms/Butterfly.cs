@@ -1,5 +1,5 @@
 
-namespace TestServerMSI.Appliaction.Alogrithms
+namespace TestServerMSI.Application.Alogrithms
 {
     public class Butterfly
     {
