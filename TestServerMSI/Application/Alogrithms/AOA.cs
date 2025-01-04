@@ -154,6 +154,7 @@ namespace TestServerMSI.Application.Alogrithms
                 writer.SaveToFileStateOfAlghoritm("savedAlgorithms/AOA" + population + iterations + C1 + C2 + C3 + C4 + ".alg");
                 Debug.WriteLine("test run: "+NumberOfEvaluationFitnessFunction);
             }
+            //Tutaj plik z zapisanym algorytmem jest usuwany, bo już nie będzie potrzebny
             if(File.Exists("savedAlgorithms/AOA" + population + iterations + C1 + C2 + C3 + C4 + ".alg"))
                 File.Delete("savedAlgorithms/AOA" + population + iterations + C1 + C2 + C3 + C4 + ".alg");
         }

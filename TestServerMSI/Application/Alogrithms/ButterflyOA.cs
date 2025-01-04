@@ -74,7 +74,7 @@ namespace TestServerMSI.Application.Alogrithms
                 this.Eval();
                 this.MoveButterflies();
                 this.ClipButterflies();
-                Debug.WriteLine(i);
+                Debug.WriteLine(i); //Dla debugu
             }
             this.Eval();
             this.XBest = this.bestButterfly.X;

@@ -23,6 +23,8 @@ namespace TestServerMSI.Application
         public bool CalculationsInProgress = false;
         public List<string> reports { get; private set;}
         public List<double[]> parametersList { get; private set; }
+        private int iterationsMade = 0;
+        private int functionsChecked = 0;
         Thread thread;
 
         private CalculationProcessor() {
@@ -44,11 +46,15 @@ namespace TestServerMSI.Application
                 CalculationsInProgress = true;
                 for (int i = 0; i < functions.Length; i++)
                 {
-                    for (int j = 0; j < parametersList.Count; j++)
+                    for (int j = iterationsMade; j < parametersList.Count; j++)
                     {
                         algorithm.Solve(functions[i].invoke, domain, parametersList[j]);
                         reports.Add(algorithm.stringReportGenerator.ReportString);
+                        iterationsMade++;
+                        //TODO jakaś forma zapisu raportów w razie przerwania i iterationsMade, dla wznowienia w ostatnim miejscu
                     }
+                    functionsChecked++;
+                    //TODO jakaś forma zapisu functionsChecked, dla wznowienia w ostatnim miejscu
                 }
                 CalculationsInProgress = false;
             });
@@ -95,10 +101,12 @@ namespace TestServerMSI.Application
             thread = new Thread(() =>
             {
                 CalculationsInProgress = true;
-                for(int i=0; i<algorithms.Length; i++)
+                for(int i= iterationsMade; i<algorithms.Length; i++)
                 {
                     algorithms[i].Solve(function.invoke, domain, parameters[i]);
                     reports.Add(algorithms[i].stringReportGenerator.ReportString);
+                    iterationsMade++;
+                    //TODO jakaś forma zapisu raportów w razie przerwania i iterationsMade, dla wznowienia w ostatnim miejscu
                 }
                 CalculationsInProgress = false;
             });
