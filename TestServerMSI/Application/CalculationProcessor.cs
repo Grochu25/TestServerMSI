@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.Diagnostics;
 using TestServerMSI.Application.Interfaces;
-using TestServerMSI.Application.Alogrithms;
-using TestServerMSI.Application.TestFunctions;
 
 namespace TestServerMSI.Application
 {
@@ -23,8 +20,8 @@ namespace TestServerMSI.Application
         public bool CalculationsInProgress = false;
         public List<string> reports { get; private set;}
         public List<double[]> parametersList { get; private set; }
-        private int iterationsMade = 0;
-        private int functionsChecked = 0;
+        public int iterationsMade = 0;
+        public int functionsChecked = 0;
         Thread thread;
 
         private CalculationProcessor() {
@@ -35,7 +32,9 @@ namespace TestServerMSI.Application
         public void oneAlgorithmManyFunctions(IOptimizationAlgorithm algorithm,
             double[,] domain, 
             double[][] parameters,
-            params ITestFunction[] functions)
+            ITestFunction[] functions,
+            int iterationsMade = 0,
+            int functionsChecked = 0)
         {
             clearLists();
             createParametersArray(parameters);
@@ -51,10 +50,11 @@ namespace TestServerMSI.Application
                         algorithm.Solve(functions[i].invoke, domain, parametersList[j]);
                         reports.Add(algorithm.stringReportGenerator.ReportString);
                         iterationsMade++;
-                        //TODO jakaś forma zapisu raportów w razie przerwania i iterationsMade, dla wznowienia w ostatnim miejscu
+                        Debug.WriteLine("BIMBO " + iterationsMade);
+                        //TODO jakaś forma zapisu do pliku z CalculationProcessorController(44) raportów w razie przerwania i iterationsMade, dla wznowienia w ostatnim miejscu
                     }
                     functionsChecked++;
-                    //TODO jakaś forma zapisu functionsChecked, dla wznowienia w ostatnim miejscu
+                    //TODO jakaś forma zapisu do pliku z CalculationProcessorController(44) functionsChecked, dla wznowienia w ostatnim miejscu
                 }
                 CalculationsInProgress = false;
             });
@@ -95,7 +95,9 @@ namespace TestServerMSI.Application
         public void oneFunctionManyAlgoritms(ITestFunction function,
             double[,] domain,
             double[][] parameters,
-            params IOptimizationAlgorithm[] algorithms)
+            IOptimizationAlgorithm[] algorithms, 
+            int iterationsMade = 0,
+            int functionsChecked = 0)
         {
             clearLists();
             thread = new Thread(() =>
@@ -106,9 +108,11 @@ namespace TestServerMSI.Application
                     algorithms[i].Solve(function.invoke, domain, parameters[i]);
                     reports.Add(algorithms[i].stringReportGenerator.ReportString);
                     iterationsMade++;
-                    //TODO jakaś forma zapisu raportów w razie przerwania i iterationsMade, dla wznowienia w ostatnim miejscu
+                    //TODO jakaś forma zapisu do pliku z CalculationProcessorController(67) raportów w razie przerwania i iterationsMade, dla wznowienia w ostatnim miejscu
                 }
                 CalculationsInProgress = false;
+                iterationsMade = 0;
+                functionsChecked = 0;
             });
             thread.Start();
         }

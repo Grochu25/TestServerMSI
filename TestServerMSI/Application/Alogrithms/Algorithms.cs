@@ -9,7 +9,7 @@ namespace TestServerMSI.Application.Alogrithms
         public static List<IOptimizationAlgorithm> getAlgorithmList()
         {
             List<Type> types = new List<Type>(from t in Assembly.GetExecutingAssembly().GetTypes()
-                                          where t.IsClass && t.Namespace == "TestServerMSI.Appliaction.Alogrithms"
+                                          where t.IsClass && t.Namespace == "TestServerMSI.Application.Alogrithms"
                                           && t.GetInterface("IOptimizationAlgorithm", true) != null
                                           select t);
             List<IOptimizationAlgorithm> algorithms = new List<IOptimizationAlgorithm>();

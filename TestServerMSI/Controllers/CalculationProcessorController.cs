@@ -41,6 +41,7 @@ namespace TestServerMSI.Controllers
         [HttpPost("oneAlgorithmManyFunctions")]
         public IActionResult Post(OneAlgorithmManyFunctionsDTO oamf)
         {
+            //TODO zapisać OneAlgorithmManyFunctionsDTO oamf do pliku w razie przerwania
             if (CalculationProcessor.Instance.CalculationsInProgress == false)
             {
                 IOptimizationAlgorithm? algorithm = Algorithms.getAlgorithm(oamf.AlgorithmName);
@@ -56,12 +57,14 @@ namespace TestServerMSI.Controllers
             else
                 return Ok("In progress");
 
+            //TODO usunąć plik z linii 44 OneAlgorithmManyFunctionsDTO oamf do pliku w razie przerwania
             return Ok();
         }
 
         [HttpPost("oneFunctionManyAlgorithms")]
         public IActionResult Post(OneFunctionManyAlgorithmsDTO oamf)
         {
+            //TODO zapisać OneFunctionManyAlgorithmsDTO oamf do pliku w razie przerwania
             if (CalculationProcessor.Instance.CalculationsInProgress == false)
             {
                 ITestFunction? testFunction = TestFunctions.getTestFunction(oamf.TestFunctionName);
@@ -77,6 +80,7 @@ namespace TestServerMSI.Controllers
             else
                 return Ok("In progress");
 
+            //TODO usunąć plik z linii 67 OneAlgorithmManyFunctionsDTO oamf do pliku w razie przerwania
             return Ok();
         }
     }
