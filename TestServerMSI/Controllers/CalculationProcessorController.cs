@@ -4,9 +4,8 @@ using TestServerMSI.Application.Alogrithms;
 using TestServerMSI.Application.Interfaces;
 using TestServerMSI.Application.TestFunctions;
 using TestServerMSI.Application;
-using TestServerMSI.Application.Alogrithms;
 using TestServerMSI.Application.DTO;
-using TestServerMSI.Application.TestFunctions;
+using System.IO;
 
 namespace TestServerMSI.Controllers
 {
@@ -27,61 +26,114 @@ namespace TestServerMSI.Controllers
                         return Ok(CalculationProcessor.Instance.reports);
                     }
                 case "stop":
-                    return Ok("Zaimplementować przerwanie");
+                    CalculationProcessor.Instance.stopCalculations();
+                    return Ok();
                 case "resume":
-                    return Ok("Zaimplementować wznowienie");
+                    return resumeSavedState();
                 case "last":
                     return Ok("pokazać ostatnią próbę");
+                case "downloadSaved":
+                    return Ok("pobieranie zapisanego stanu");
                 default:
                     return NotFound();
             }
             
         }
 
+        private IActionResult resumeSavedState()
+        {
+            List<string> savedFiles = new DirectoryInfo("savedAlgorithms").GetFiles().Select(f => f.Name).ToList();
+            if (savedFiles.Contains("OAMF.dto"))
+            {
+                OneAlgorithmManyFunctionsDTOExtended? oamf = QueueSavers.readOAMFdtoFromFile();
+                if (oamf != null)
+                {
+                    runOAMF(oamf.OneAlgorithmManyFunctions, oamf.IterationsMade, oamf.FunctionsChecked);
+                    return Ok("Resumed One Algorithm Many Functions");
+                }
+                return Ok("Failed to resume");
+            }
+            else if (savedFiles.Contains("OFMA.dto"))
+            {
+                OneFunctionManyAlgorithmsDTOExtended? ofma = QueueSavers.readOFMAdtoFromFile();
+                if (ofma != null)
+                {
+                    runOFMA(ofma.OneFunctionManyAlgorithms, ofma.IterationsMade, ofma.AlgorithmsChecked);
+                    return Ok("Resumed One Function Many Algorithms");
+                }
+                return Ok("Failed to resume");
+            }
+            return Ok("No saved states");
+        }
+
         [HttpPost("oneAlgorithmManyFunctions")]
         public IActionResult Post(OneAlgorithmManyFunctionsDTO oamf)
         {
-            //TODO zapisać OneAlgorithmManyFunctionsDTO oamf do pliku w razie przerwania
             if (CalculationProcessor.Instance.CalculationsInProgress == false)
             {
-                IOptimizationAlgorithm? algorithm = Algorithms.getAlgorithm(oamf.AlgorithmName);
-                List<ITestFunction> tests = new List<ITestFunction>();
-                foreach(var func in oamf.TestFunctionNames)
-                    if(TestFunctions.getTestFunction(func) != null)
-                        tests.Add(TestFunctions.getTestFunction(func));
-
-                Debug.WriteLine("TESTS " + tests.Count);
-                CalculationProcessor.Instance.oneAlgorithmManyFunctions(algorithm,
-                    oamf.domainAsMulti(), oamf.Parameters, tests.ToArray());
+                new DirectoryInfo("savedAlgorithms").GetFiles().ToList().ForEach(f => f.Delete());
+                QueueSavers.saveOAMFdtoToFile(oamf);
+                if(!runOAMF(oamf))
+                    return StatusCode(500);
             }
             else
                 return Ok("In progress");
 
-            //TODO usunąć plik z linii 44 OneAlgorithmManyFunctionsDTO oamf do pliku w razie przerwania
             return Ok();
         }
 
         [HttpPost("oneFunctionManyAlgorithms")]
-        public IActionResult Post(OneFunctionManyAlgorithmsDTO oamf)
+        public IActionResult Post(OneFunctionManyAlgorithmsDTO ofma)
         {
-            //TODO zapisać OneFunctionManyAlgorithmsDTO oamf do pliku w razie przerwania
             if (CalculationProcessor.Instance.CalculationsInProgress == false)
             {
-                ITestFunction? testFunction = TestFunctions.getTestFunction(oamf.TestFunctionName);
-                List<IOptimizationAlgorithm> algorithms = new List<IOptimizationAlgorithm>();
-                foreach (var alg in oamf.AlgorithmNames)
-                    if (Algorithms.getAlgorithm(alg) != null)
-                        algorithms.Add(Algorithms.getAlgorithm(alg));
-
-
-                CalculationProcessor.Instance.oneFunctionManyAlgoritms(testFunction,
-                    oamf.domainAsMulti(), oamf.Parameters, algorithms.ToArray());
+                new DirectoryInfo("savedAlgorithms").GetFiles().ToList().ForEach(f => f.Delete());
+                QueueSavers.saveOFMAdtoToFile(ofma);
+                if(!runOFMA(ofma))
+                    return StatusCode(500);
             }
             else
                 return Ok("In progress");
-
-            //TODO usunąć plik z linii 67 OneAlgorithmManyFunctionsDTO oamf do pliku w razie przerwania
+            
             return Ok();
+        }
+
+        private bool runOAMF(OneAlgorithmManyFunctionsDTO oamf, int iterationsMade = 0, int functionsChecked = 0)
+        {
+            IOptimizationAlgorithm? algorithm = Algorithms.getAlgorithm(oamf.AlgorithmName);
+            List<ITestFunction?> tests = new List<ITestFunction?>();
+            foreach (var func in oamf.TestFunctionNames)
+                if (TestFunctions.getTestFunction(func) != null)
+                    tests.Add(TestFunctions.getTestFunction(func));
+
+            Debug.WriteLine("TESTS " + tests.Count);
+            if (algorithm != null && !tests.Contains(null))
+            {
+                CalculationProcessor.Instance.oneAlgorithmManyFunctions(algorithm,
+                    oamf.domainAsMulti(), oamf.Parameters, tests.ToArray(), iterationsMade, functionsChecked);
+                return true;
+            }
+            else
+                return false;
+        }
+
+        private bool runOFMA(OneFunctionManyAlgorithmsDTO ofma, int iterationsMade = 0, int algorithmsChecked = 0)
+        {
+            ITestFunction? testFunction = TestFunctions.getTestFunction(ofma.TestFunctionName);
+            List<IOptimizationAlgorithm?> algorithms = new List<IOptimizationAlgorithm?>();
+            foreach (var alg in ofma.AlgorithmNames)
+                if (Algorithms.getAlgorithm(alg) != null)
+                    algorithms.Add(Algorithms.getAlgorithm(alg));
+
+
+            if (testFunction != null && !algorithms.Contains(null))
+            {
+                CalculationProcessor.Instance.oneFunctionManyAlgoritms(testFunction,
+                    ofma.domainAsMulti(), ofma.Parameters, algorithms.ToArray(), iterationsMade, algorithmsChecked);
+                return true;
+            }
+            else
+                return false;
         }
     }
 }

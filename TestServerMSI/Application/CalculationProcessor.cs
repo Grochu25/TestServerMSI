@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Diagnostics;
+using TestServerMSI.Application.Alogrithms;
 using TestServerMSI.Application.Interfaces;
 
 namespace TestServerMSI.Application
@@ -22,11 +23,22 @@ namespace TestServerMSI.Application
         public List<double[]> parametersList { get; private set; }
         public int iterationsMade = 0;
         public int functionsChecked = 0;
-        Thread thread;
+        private bool stop = false;
+        private Thread thread;
+
+        public IOptimizationAlgorithm CurrentAlgorithm;
 
         private CalculationProcessor() {
             reports = new List<string>();
             parametersList = new List<double[]>();
+        }
+
+        public void stopCalculations()
+        {
+            stop = true;
+            if(CurrentAlgorithm != null)
+                CurrentAlgorithm.Stop = true;
+            thread.Interrupt();
         }
 
         public void oneAlgorithmManyFunctions(IOptimizationAlgorithm algorithm,
@@ -36,27 +48,35 @@ namespace TestServerMSI.Application
             int iterationsMade = 0,
             int functionsChecked = 0)
         {
+            stop = false;
             clearLists();
+            saveIterationsToFile("savedAlgorithms/OAMF.dto", iterationsMade);
+            saveFunctionsCheckedToFile("savedAlgorithms/OAMF.dto", functionsChecked);
             createParametersArray(parameters);
             parametersList.Sort(parametersCompare);
-
+            CurrentAlgorithm = algorithm;
             thread = new Thread(() =>
             {
                 CalculationsInProgress = true;
-                for (int i = 0; i < functions.Length; i++)
+                for (int i = functionsChecked; i < functions.Length; i++)
                 {
                     for (int j = iterationsMade; j < parametersList.Count; j++)
                     {
+                        if (stop) return;
                         algorithm.Solve(functions[i].invoke, domain, parametersList[j]);
+                        if (stop) return;
                         reports.Add(algorithm.stringReportGenerator.ReportString);
                         iterationsMade++;
-                        Debug.WriteLine("BIMBO " + iterationsMade);
-                        //TODO jakaś forma zapisu do pliku z CalculationProcessorController(44) raportów w razie przerwania i iterationsMade, dla wznowienia w ostatnim miejscu
+                        saveIterationsToFile("savedAlgorithms/OAMF.dto", iterationsMade);
                     }
                     functionsChecked++;
-                    //TODO jakaś forma zapisu do pliku z CalculationProcessorController(44) functionsChecked, dla wznowienia w ostatnim miejscu
+                    iterationsMade = 0;
+                    saveIterationsToFile("savedAlgorithms/OAMF.dto", iterationsMade);
+                    saveFunctionsCheckedToFile("savedAlgorithms/OAMF.dto", functionsChecked);
                 }
                 CalculationsInProgress = false;
+                if (File.Exists("savedAlgorithms/OAMF.dto"))
+                    File.Delete("savedAlgorithms/OAMF.dto");
             });
             thread.Start();
         }
@@ -97,22 +117,29 @@ namespace TestServerMSI.Application
             double[][] parameters,
             IOptimizationAlgorithm[] algorithms, 
             int iterationsMade = 0,
-            int functionsChecked = 0)
+            int algorithmsChecked = 0)
         {
+            stop = false;
             clearLists();
+            saveIterationsToFile("savedAlgorithms/OFMA.dto", iterationsMade);
+            saveFunctionsCheckedToFile("savedAlgorithms/OFMA.dto", algorithmsChecked);
             thread = new Thread(() =>
             {
                 CalculationsInProgress = true;
                 for(int i= iterationsMade; i<algorithms.Length; i++)
                 {
+                    if (stop) return;
+                    CurrentAlgorithm = algorithms[i];
+                    if (stop) return;
+                    Debug.WriteLine("Current Algorithm has been set");
                     algorithms[i].Solve(function.invoke, domain, parameters[i]);
                     reports.Add(algorithms[i].stringReportGenerator.ReportString);
                     iterationsMade++;
-                    //TODO jakaś forma zapisu do pliku z CalculationProcessorController(67) raportów w razie przerwania i iterationsMade, dla wznowienia w ostatnim miejscu
+                    saveIterationsToFile("savedAlgorithms/OFMA.dto", iterationsMade);
                 }
                 CalculationsInProgress = false;
-                iterationsMade = 0;
-                functionsChecked = 0;
+                if (File.Exists("savedAlgorithms/OFMA.dto"))
+                    File.Delete("savedAlgorithms/OFMA.dto");
             });
             thread.Start();
         }
@@ -121,6 +148,60 @@ namespace TestServerMSI.Application
         {
             reports.Clear();
             parametersList.Clear();
+        }
+
+        private void saveIterationsToFile(string path, int iterations)
+        {
+            List<string> lines = new List<string>();
+            using (FileStream fs = new FileStream(path, FileMode.Open))
+            {
+                using (StreamReader sr = new StreamReader(fs))
+                {
+                    string? line = sr.ReadLine();
+                    while (line != null)
+                    {
+                        lines.Add(line);
+                        line = sr.ReadLine();
+                    }
+                }
+            }
+            lines[lines.Count - 2] = iterations.ToString();
+            using (FileStream fs = new FileStream(path, FileMode.Open))
+            {
+                using (StreamWriter sw = new StreamWriter(fs))
+                {
+                    foreach(string line in lines)
+                        sw.WriteLine(line);
+                    sw.Flush();
+                }
+            }
+        }
+
+        private void saveFunctionsCheckedToFile(string path, int functionsChecked)
+        {
+            List<string> lines = new List<string>();
+            using (FileStream fs = new FileStream(path, FileMode.Open))
+            {
+                using (StreamReader sr = new StreamReader(fs))
+                {
+                    string? line = sr.ReadLine();
+                    while (line != null)
+                    {
+                        lines.Add(line);
+                        line = sr.ReadLine();
+                    }
+                }
+            }
+            lines[lines.Count - 1] = functionsChecked.ToString();
+            using (FileStream fs = new FileStream(path, FileMode.Open))
+            {
+                using (StreamWriter sw = new StreamWriter(fs))
+                {
+                    foreach (string line in lines)
+                        sw.WriteLine(line);
+                    sw.Flush();
+                }
+            }
         }
     }
 }

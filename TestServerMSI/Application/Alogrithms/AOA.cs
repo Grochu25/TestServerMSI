@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 using TestServerMSI.Application.Interfaces;
 using TestServerMSI.Application.Services;
 
@@ -20,6 +21,10 @@ namespace TestServerMSI.Application.Alogrithms
             FBest = 1;
             NumberOfEvaluationFitnessFunction = 0;
 
+            CurrentIteration = 0;
+            Population = [[0.0]];
+            PopulationValues = [0.0];
+
             stringReportGenerator = new GenerateTextReport();
             pdfReportGenerator = new GeneratePDFReport();
             writer = new StateWriter();
@@ -35,6 +40,12 @@ namespace TestServerMSI.Application.Alogrithms
         public double[] XBest { get; set; }
         public double FBest { get; set; }
         public int NumberOfEvaluationFitnessFunction { get; set; }
+        // Dodane przez nas
+        public int CurrentIteration { get; set; }
+        public double[][] Population { get; set; }
+        public double[] PopulationValues { get; set; }
+        public bool Stop { get; set; } = false;
+        // Koniec
 
         private int dimensions = 1;
         private double population = 0;
@@ -63,10 +74,35 @@ namespace TestServerMSI.Application.Alogrithms
             C2 = parameters[3];
             C3 = parameters[4];
             C4 = parameters[5];
-
             XBest = new double[dimensions];
             FBest = 1;
             NumberOfEvaluationFitnessFunction = 0;
+            CurrentIteration = 0;
+            Population = new double[(int)population][];
+            for (int i = 0; i < (int)population; i++)
+            {
+                Population[i] = new double[dimensions * 4];
+            }
+            PopulationValues = new double[(int)population];
+            if (File.Exists("savedAlgorithms/AOA.alg"))
+            {
+                reader.LoadFromFileStateOfAlghoritm("savedAlgorithms/AOA.alg");
+                objects = new Floating[(int)population];
+                for (int i = 0; i < population; i++)
+                {
+                    objects[i] = new Floating(
+                        Population[i].Take(dimensions).ToArray(),
+                        Population[i].Skip(dimensions).Take(dimensions).ToArray(),
+                        Population[i].Skip(dimensions*2).Take(dimensions).ToArray(),
+                        Population[i].Skip(dimensions*3).Take(dimensions).ToArray()
+                    );
+                    objects[i].FitnessValue = PopulationValues[i];
+                }
+            }
+            else
+            {
+                initialize();
+            }
             runAlgorithm();
         }
 
@@ -74,7 +110,7 @@ namespace TestServerMSI.Application.Alogrithms
         {
             double[] coords = new double[dimensions];
             for (int i = 0; i < dimensions; i++)
-                coords[i] = domain[0,i] + rand.NextDouble() * (domain[1, i] - domain[0, i]);
+                coords[i] = domain[0, i] + rand.NextDouble() * (domain[1, i] - domain[0, i]);
             return coords;
         }
 
@@ -103,10 +139,15 @@ namespace TestServerMSI.Application.Alogrithms
 
         private void evaluate()
         {
+            foreach (var ob in objects)
+            {
+                ob.FitnessValue = f(ob.X);
+                NumberOfEvaluationFitnessFunction++;
+            }
             bestObject = objects[0];
             for (int i = 1; i < objects.Length; i++)
             {
-                if (f(objects[i].X) < f(bestObject.X))
+                if (objects[i].FitnessValue < bestObject.FitnessValue)
                     bestObject = objects[i];
             }
         }
@@ -126,11 +167,11 @@ namespace TestServerMSI.Application.Alogrithms
 
         public void runAlgorithm()
         {
-            initialize();
+
             evaluate();
             double TF = 0.0;
             double d = 0.0;
-            for (double t = NumberOfEvaluationFitnessFunction + 1.0; t <= iterations; t += 1.0)
+            for (double t = CurrentIteration + 1.0; t <= iterations; t += 1.0)
             {
                 TF = Math.Exp((t - iterations) / iterations);
                 TF = (TF > 1) ? 1 : TF;
@@ -149,14 +190,33 @@ namespace TestServerMSI.Application.Alogrithms
 
                 evaluate();
                 XBest = bestObject.X;
-                FBest = f(XBest);
-                NumberOfEvaluationFitnessFunction++;
-                writer.SaveToFileStateOfAlghoritm("savedAlgorithms/AOA" + population + iterations + C1 + C2 + C3 + C4 + ".alg");
-                Debug.WriteLine("test run: "+NumberOfEvaluationFitnessFunction);
+                FBest = bestObject.FitnessValue;
+                savePopultaionToInterfaceValues();
+                writer.SaveToFileStateOfAlghoritm("savedAlgorithms/AOA.alg");
+                Debug.WriteLine("test run: " + CurrentIteration);
+                CurrentIteration++;
+                if(Stop) return;
             }
+            Debug.WriteLine("AOA finished " + XBest.ToString() + " : " + FBest);
             //Tutaj plik z zapisanym algorytmem jest usuwany, bo już nie będzie potrzebny
-            if(File.Exists("savedAlgorithms/AOA" + population + iterations + C1 + C2 + C3 + C4 + ".alg"))
-                File.Delete("savedAlgorithms/AOA" + population + iterations + C1 + C2 + C3 + C4 + ".alg");
+            if (File.Exists("savedAlgorithms/AOA.alg"))
+                File.Delete("savedAlgorithms/AOA.alg");
+        }
+
+        private void savePopultaionToInterfaceValues()
+        {
+            for (int i = 0; i < population; i++)
+            {
+                for (int j = 0; j < dimensions; j++)
+                {
+                    Population[i][j] = objects[i].X[j];
+                    Population[i][j+dimensions] = objects[i].Den[j];
+                    Population[i][j+dimensions*2] = objects[i].Vol[j];
+                    Population[i][j+dimensions*3] = objects[i].Acc[j];
+                }
+
+                PopulationValues[i] = objects[i].FitnessValue;
+            }
         }
 
         private void countAccForExploration()
@@ -235,7 +295,8 @@ namespace TestServerMSI.Application.Alogrithms
             public double[] X { get; set; }
             public double[] Den { get; set; }
             public double[] Vol { get; set; }
-            public double[] Acc { get; set; } //Zrobić z tego jednowymiarową?
+            public double[] Acc { get; set; }
+            public double FitnessValue { get; set; }
 
             public Floating(double[] X, double[] Den, double[] Vol, double[] Acc)
             {

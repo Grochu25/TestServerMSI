@@ -40,5 +40,19 @@
 
         // Właściwość zwracająca liczbę wywołań funkcji dopasowania
         int NumberOfEvaluationFitnessFunction { get; set; }
+
+        // Dodane przez nas
+        
+        // Właściwość zwracająca/ustawiająca obecną iterację algorytmu
+        int CurrentIteration { get; set; }
+
+        // Właściwość zwracająca/ustawiająca obecną populację obiektów
+        double[][] Population {  get; set; }
+
+        // Właściwość zwracająca/ustawiająca obecne wartości funkcji dla obiektów
+        double[] PopulationValues { get; set; }
+
+        //Właściwość informująca o przerwaniu dalszych obliczeń
+        bool Stop {  get; set; }
     }
 }

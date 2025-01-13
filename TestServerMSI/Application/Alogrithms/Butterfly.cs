@@ -4,6 +4,7 @@ namespace TestServerMSI.Application.Alogrithms
     public class Butterfly
     {
         public double[] X { get; set; }
+        public double FitnessValue { get; set; }
 
         public Butterfly(double[] X)
         {
@@ -16,7 +17,7 @@ namespace TestServerMSI.Application.Alogrithms
 
         public double GetFragrance(fitnessFunction f, double a, double c)
         {
-            return c * Math.Pow(f(this.X), a);
+            return c * Math.Pow(FitnessValue, a);
         }
 
         public void Clip(double[,] domain)

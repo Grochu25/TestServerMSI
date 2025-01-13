@@ -19,6 +19,9 @@ namespace TestServerMSI.Application.Alogrithms
             this.XBest = new double[1];
             this.FBest = 10000;
             this.NumberOfEvaluationFitnessFunction = 0;
+            this.CurrentIteration = 0;
+            this.Population = [[0]];
+            this.PopulationValues = [0];
 
             this.stringReportGenerator = new GenerateTextReport();
             this.pdfReportGenerator = new GeneratePDFReport();
@@ -35,6 +38,13 @@ namespace TestServerMSI.Application.Alogrithms
         public double[] XBest { get; set; }
         public double FBest { get; set; }
         public int NumberOfEvaluationFitnessFunction { get; set; }
+
+        // Dodane przez nas
+        public int CurrentIteration { get; set; }
+        public double[][] Population { get; set; }
+        public double[] PopulationValues { get; set; }
+        public bool Stop { get; set; } = false;
+        // Koniec
 
         private int dimensions = 1;
         private double population = 0;
@@ -63,22 +73,54 @@ namespace TestServerMSI.Application.Alogrithms
             this.XBest = new double[this.dimensions];
             this.FBest = 1;
             this.NumberOfEvaluationFitnessFunction = 0;
+            Population = new double[(int)population][];
+            for (int i = CurrentIteration; i < (int)population; i++)
+            {
+                Population[i] = new double[dimensions];
+            }
+            PopulationValues = new double[(int)population];
+            if (File.Exists("savedAlgorithms/BOA.alg"))
+            {
+                reader.LoadFromFileStateOfAlghoritm("savedAlgorithms/BOA.alg");
+                this.butterflies = new Butterfly[(int)this.population];
+                for (uint i = 0; i < this.population; ++i)
+                {
+                    this.butterflies[i] = new Butterfly(Population[i]);
+                    this.butterflies[i].FitnessValue = PopulationValues[i];
+                }
+                this.butterflies.ToList();
+            }
+            else
+            {
+                this.InitButterflies();
+            }
             this.runAlgorithm();
         }
 
         public void runAlgorithm()
         {
-            this.InitButterflies();
-            for (int i = 0; i < this.iterations; ++i)
+
+            for (int i = CurrentIteration; i < this.iterations; ++i)
             {
                 this.Eval();
                 this.MoveButterflies();
                 this.ClipButterflies();
+                for (int k = 0; k < population; k++)
+                {
+                    Population[k] = butterflies[k].X;
+                    PopulationValues[k] = butterflies[k].FitnessValue;
+                }
+                CurrentIteration++;
+                writer.SaveToFileStateOfAlghoritm("savedAlgorithms/BOA.alg");
+                if (Stop) return;
                 Debug.WriteLine(i); //Dla debugu
             }
             this.Eval();
             this.XBest = this.bestButterfly.X;
-            this.FBest = this.fitness(this.XBest);
+            this.FBest = this.bestButterfly.FitnessValue;
+            Debug.WriteLine("BOA finished: "+XBest.ToString()+" : "+FBest);
+            if (File.Exists("savedAlgorithms/BOA.alg"))
+                File.Delete("savedAlgorithms/BOA.alg");
         }
 
         public void MoveButterflies()
@@ -115,6 +157,7 @@ namespace TestServerMSI.Application.Alogrithms
             for (uint i = 0; i < this.population; ++i)
             {
                 this.butterflies[i] = new Butterfly(this.RandomPointInDiemnsions());
+                Debug.WriteLine(butterflies[i].X[0]);
             }
             this.butterflies.ToList();
         }
@@ -145,11 +188,15 @@ namespace TestServerMSI.Application.Alogrithms
 
         private void Eval()
         {
-            double[] fs = this.butterflies.Select(b => this.fitness(b.X)).ToArray();
+            for(int i = 0; i < butterflies.Length; i++)
+            {
+                butterflies[i].FitnessValue = fitness(butterflies[i].X);
+                NumberOfEvaluationFitnessFunction++;
+            }
             uint minIdx = 0;
             for (uint i = 1; i < this.population; i++)
             {
-                if (fs[i] < fs[minIdx])
+                if (butterflies[i].FitnessValue < butterflies[minIdx].FitnessValue)
                     minIdx = i;
             }
             this.bestButterfly = this.butterflies[minIdx];
