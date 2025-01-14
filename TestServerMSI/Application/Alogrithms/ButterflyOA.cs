@@ -73,6 +73,7 @@ namespace TestServerMSI.Application.Alogrithms
             this.XBest = new double[this.dimensions];
             this.FBest = 1;
             this.NumberOfEvaluationFitnessFunction = 0;
+            this.CurrentIteration = 0;
             Population = new double[(int)population][];
             for (int i = CurrentIteration; i < (int)population; i++)
             {
