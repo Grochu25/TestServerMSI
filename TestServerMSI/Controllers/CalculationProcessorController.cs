@@ -98,7 +98,7 @@ namespace TestServerMSI.Controllers
             return Ok();
         }
 
-        private bool runOAMF(OneAlgorithmManyFunctionsDTO oamf, int iterationsMade = 0, int functionsChecked = 0)
+        public static bool runOAMF(OneAlgorithmManyFunctionsDTO oamf, int iterationsMade = 0, int functionsChecked = 0)
         {
             IOptimizationAlgorithm? algorithm = Algorithms.getAlgorithm(oamf.AlgorithmName);
             List<ITestFunction?> tests = new List<ITestFunction?>();
@@ -117,7 +117,7 @@ namespace TestServerMSI.Controllers
                 return false;
         }
 
-        private bool runOFMA(OneFunctionManyAlgorithmsDTO ofma, int iterationsMade = 0, int algorithmsChecked = 0)
+        public static bool runOFMA(OneFunctionManyAlgorithmsDTO ofma, int iterationsMade = 0, int algorithmsChecked = 0)
         {
             ITestFunction? testFunction = TestFunctions.getTestFunction(ofma.TestFunctionName);
             List<IOptimizationAlgorithm?> algorithms = new List<IOptimizationAlgorithm?>();
