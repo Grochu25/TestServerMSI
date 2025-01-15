@@ -74,6 +74,7 @@ namespace TestServerMSI.Application.Alogrithms
             this.FBest = 1;
             this.NumberOfEvaluationFitnessFunction = 0;
             this.CurrentIteration = 0;
+            Stop = false;
             Population = new double[(int)population][];
             for (int i = CurrentIteration; i < (int)population; i++)
             {
@@ -82,7 +83,7 @@ namespace TestServerMSI.Application.Alogrithms
             PopulationValues = new double[(int)population];
             if (File.Exists("savedAlgorithms/BOA.alg"))
             {
-                reader.LoadFromFileStateOfAlghoritm("savedAlgorithms/BOA.alg");
+                reader.LoadFromFileStateOfAlgorithm("savedAlgorithms/BOA.alg");
                 this.butterflies = new Butterfly[(int)this.population];
                 for (uint i = 0; i < this.population; ++i)
                 {
@@ -112,7 +113,7 @@ namespace TestServerMSI.Application.Alogrithms
                     PopulationValues[k] = butterflies[k].FitnessValue;
                 }
                 CurrentIteration++;
-                writer.SaveToFileStateOfAlghoritm("savedAlgorithms/BOA.alg");
+                writer.SaveToFileStateOfAlgorithm("savedAlgorithms/BOA.alg");
                 if (Stop) return;
                 Debug.WriteLine(i); //Dla debugu
             }

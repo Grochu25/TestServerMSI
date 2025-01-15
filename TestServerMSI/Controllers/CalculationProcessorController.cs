@@ -42,6 +42,7 @@ namespace TestServerMSI.Controllers
 
         private IActionResult resumeSavedState()
         {
+            if (!Directory.Exists("savedAlgorithms")) Directory.CreateDirectory("savedAlgorithms");
             List<string> savedFiles = new DirectoryInfo("savedAlgorithms").GetFiles().Select(f => f.Name).ToList();
             if (savedFiles.Contains("OAMF.dto"))
             {
@@ -71,6 +72,7 @@ namespace TestServerMSI.Controllers
         {
             if (CalculationProcessor.Instance.CalculationsInProgress == false)
             {
+                if (!Directory.Exists("savedAlgorithms")) Directory.CreateDirectory("savedAlgorithms");
                 new DirectoryInfo("savedAlgorithms").GetFiles().ToList().ForEach(f => f.Delete());
                 QueueSavers.saveOAMFdtoToFile(oamf);
                 if(!runOAMF(oamf))
@@ -87,6 +89,7 @@ namespace TestServerMSI.Controllers
         {
             if (CalculationProcessor.Instance.CalculationsInProgress == false)
             {
+                if (!Directory.Exists("savedAlgorithms")) Directory.CreateDirectory("savedAlgorithms");
                 new DirectoryInfo("savedAlgorithms").GetFiles().ToList().ForEach(f => f.Delete());
                 QueueSavers.saveOFMAdtoToFile(ofma);
                 if(!runOFMA(ofma))

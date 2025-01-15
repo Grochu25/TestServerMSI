@@ -38,7 +38,7 @@ namespace TestServerMSI.Application
             stop = true;
             if(CurrentAlgorithm != null)
                 CurrentAlgorithm.Stop = true;
-            thread.Interrupt();
+            CalculationsInProgress = false;
         }
 
         public void oneAlgorithmManyFunctions(IOptimizationAlgorithm algorithm,
