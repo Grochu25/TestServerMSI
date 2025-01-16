@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
+using TestServerMSI.Application.DLLs;
 using TestServerMSI.Application.Interfaces;
 
 namespace TestServerMSI.Application.TestFunctions
@@ -19,6 +20,7 @@ namespace TestServerMSI.Application.TestFunctions
                 if (instance is ITestFunction)
                     testFunctions.Add((ITestFunction)instance);
             }
+            testFunctions.AddRange(DLLTestFunctions.getDLLTestFunctionList());
             return testFunctions;
         }
 

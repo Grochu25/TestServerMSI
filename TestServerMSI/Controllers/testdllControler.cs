@@ -35,28 +35,28 @@ namespace TestServerMSI.Controllers
             foreach (var x in from t in assembly.GetTypes() where t.IsClass && t.GetInterface("IOptimizationAlgorithm", true) != null select t)
                 algDll = new AlgorithmCapsule(Activator.CreateInstance(x), fitness);
 
-            //if (CalculationProcessor.Instance.CalculationsInProgress == false)
-            //{
-            //    new DirectoryInfo("savedAlgorithms").GetFiles().ToList().ForEach(f => f.Delete());
-            //    QueueSavers.saveOAMFdtoToFile(oamf);
+            if (CalculationProcessor.Instance.CalculationsInProgress == false)
+            {
+                new DirectoryInfo("savedAlgorithms").GetFiles().ToList().ForEach(f => f.Delete());
+                QueueSavers.saveOAMFdtoToFile(oamf);
 
-            //    List<ITestFunction?> tests = new List<ITestFunction?>();
-            //    foreach (var func in oamf.TestFunctionNames)
-            //        if (TestFunctions.getTestFunction(func) != null)
-            //            tests.Add(TestFunctions.getTestFunction(func));
+                List<ITestFunction?> tests = new List<ITestFunction?>();
+                foreach (var func in oamf.TestFunctionNames)
+                    if (TestFunctions.getTestFunction(func) != null)
+                        tests.Add(TestFunctions.getTestFunction(func));
 
-            //    Debug.WriteLine("TESTS " + tests.Count);
-            //    if (algDll != null && !tests.Contains(null))
-            //    {
-            //        CalculationProcessor.Instance.oneAlgorithmManyFunctions(algDll,
-            //            oamf.domainAsMulti(), oamf.Parameters, tests.ToArray());
-            //        return Ok();
-            //    }
-            //    else
-            //        return StatusCode(500);
-            //}
-            //else
-            //    return Ok("In progress");
+                Debug.WriteLine("TESTS " + tests.Count);
+                if (algDll != null && !tests.Contains(null))
+                {
+                    CalculationProcessor.Instance.oneAlgorithmManyFunctions(algDll,
+                        oamf.domainAsMulti(), oamf.Parameters, tests.ToArray());
+                    return Ok();
+                }
+                else
+                    return StatusCode(500);
+            }
+            else
+                return Ok("In progress");
 
             return Ok();
         }

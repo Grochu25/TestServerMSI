@@ -6,7 +6,7 @@ namespace TestServerMSI.Application.Services
     public class StateWriter : IStateWriter
     {
         public StateWriter() { }
-        public void SaveToFileStateOfAlghoritm(string path)
+        public void SaveToFileStateOfAlgorithm(string path)
         {
             // Iteration number
             var str = CalculationProcessor.Instance.CurrentAlgorithm.CurrentIteration.ToString();

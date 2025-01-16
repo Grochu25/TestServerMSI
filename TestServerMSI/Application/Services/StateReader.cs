@@ -6,7 +6,7 @@ namespace TestServerMSI.Application.Services
     public class StateReader : IStateReader
     {
         public StateReader() { }
-        public void LoadFromFileStateOfAlghoritm(string path)
+        public void LoadFromFileStateOfAlgorithm(string path)
         {
             Debug.WriteLine("READING FILE");
             StreamReader sr = new StreamReader(path);

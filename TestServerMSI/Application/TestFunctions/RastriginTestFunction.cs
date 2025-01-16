@@ -4,7 +4,7 @@ namespace TestServerMSI.Application.TestFunctions
 {
     public class RastriginTestFunction : ITestFunction
     {
-        public string Name => "Rastrigin";
+        public string Name { get; set; } = "Rastrigin";
 
         public double invoke(params double[] arg)
         {

@@ -86,7 +86,7 @@ namespace TestServerMSI.Application.Alogrithms
             PopulationValues = new double[(int)population];
             if (File.Exists("savedAlgorithms/AOA.alg"))
             {
-                reader.LoadFromFileStateOfAlghoritm("savedAlgorithms/AOA.alg");
+                reader.LoadFromFileStateOfAlgorithm("savedAlgorithms/AOA.alg");
                 objects = new Floating[(int)population];
                 for (int i = 0; i < population; i++)
                 {
@@ -192,7 +192,7 @@ namespace TestServerMSI.Application.Alogrithms
                 XBest = bestObject.X;
                 FBest = bestObject.FitnessValue;
                 savePopultaionToInterfaceValues();
-                writer.SaveToFileStateOfAlghoritm("savedAlgorithms/AOA.alg");
+                writer.SaveToFileStateOfAlgorithm("savedAlgorithms/AOA.alg");
                 Debug.WriteLine("test run: " + CurrentIteration);
                 CurrentIteration++;
                 if(Stop) return;

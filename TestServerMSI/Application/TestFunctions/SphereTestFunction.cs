@@ -4,7 +4,7 @@ namespace TestServerMSI.Application.TestFunctions
 {
     public class SphereTestFunction : ITestFunction
     {
-        public string Name => "Sphere";
+        public string Name { get; set; } = "Sphere";
 
         public double invoke(params double[] arg)
         {

@@ -11,16 +11,20 @@ namespace TestServerMSI.Application.DLLs
         private Type _algorithmType;
         private Type? _fitnessType;
 
-        public AlgorithmCapsule(object algorithmFromDLL, Type? fitness)
+        public AlgorithmCapsule(object algorithmFromDLL, Type? fitnessTypeFromDLL)
         {
             _algorithmFromDLL = algorithmFromDLL;
             _algorithmType = _algorithmFromDLL.GetType();
-            _fitnessType = fitness;
+            _fitnessType = fitnessTypeFromDLL;
 
-            Debug.WriteLine(_algorithmType.GetProperty("reader").PropertyType.Name);
-            var writterType = _algorithmType.GetProperty("reader").PropertyType;
-            _algorithmType.GetProperty("reader").SetValue(_algorithmFromDLL, new StateReader());
-        //https://stackoverflow.com/questions/7299097/dynamically-replace-the-contents-of-a-c-sharp-method
+            var writerType = _algorithmType.GetProperty("writer").PropertyType;
+            var readerType = _algorithmType.GetProperty("reader").PropertyType;
+
+            var writerCapsule = Encapsulator.generateCapsule(writerType, typeof(StateWriter), "SaveToFileStateOfAlgorithm", "StateWriterCapsule");
+            _algorithmType.GetProperty("writer").SetValue(_algorithmFromDLL, writerCapsule);
+
+            var readerCapsule = Encapsulator.generateCapsule(readerType, typeof(StateReader), "LoadFromFileStateOfAlgorithm", "StateReaderCapsule");
+            _algorithmType.GetProperty("reader").SetValue(_algorithmFromDLL, readerCapsule);
         }
         public string Name 
         { 
@@ -33,11 +37,16 @@ namespace TestServerMSI.Application.DLLs
                 _algorithmType.GetProperty("Name").SetValue(_algorithmFromDLL, value);
             } 
         }
+        private ParamInfo[]? _paramInfos = null;
         public ParamInfo[] ParamsInfo
         {
             get
             {
-                return (ParamInfo[])_algorithmType.GetProperty("ParamsInfo").GetValue(_algorithmFromDLL);
+                if(_paramInfos == null)
+                {
+                    _paramInfos = readParamsInfo();
+                }
+                return _paramInfos;
             }
             set
             {
@@ -90,6 +99,25 @@ namespace TestServerMSI.Application.DLLs
                 solveMethod.Invoke(_algorithmFromDLL, [ff, domain, parameters]);
             }
 
+        }
+
+        private ParamInfo[] readParamsInfo()
+        { 
+            object[] parameters = _algorithmType.GetProperty("ParamsInfo").GetValue(_algorithmFromDLL) as object[];
+            Type type = parameters[0].GetType();
+            int paramsNumber = parameters.Length;
+            ParamInfo[] paramInfos = new ParamInfo[paramsNumber];
+            for(int i = 0; i< paramsNumber; i++)
+            {
+                paramInfos[i] = new ParamInfo(
+                    (string)type.GetProperty("Name").GetValue(parameters[i]),
+                    (string)type.GetProperty("Description").GetValue(parameters[i]),
+                    (double)type.GetProperty("UpperBoundary").GetValue(parameters[i]),
+                    (double)type.GetProperty("LowerBoundary").GetValue(parameters[i])
+                    );
+            }
+
+            return paramInfos;
         }
     }
 }

@@ -2,7 +2,7 @@
 {
     public interface ITestFunction
     {
-        string Name { get; }
+        string Name { get; set; }
         double invoke(params double[] arg);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
+using TestServerMSI.Application.DLLs;
 using TestServerMSI.Application.Interfaces;
 
 namespace TestServerMSI.Application.Alogrithms
@@ -20,6 +21,7 @@ namespace TestServerMSI.Application.Alogrithms
                 if (instance is IOptimizationAlgorithm)
                     algorithms.Add((IOptimizationAlgorithm)instance);
             }
+            algorithms.AddRange(DLLAlgorithms.getDLLAlgorithmList());
             return algorithms;
         }
 
