@@ -4,7 +4,7 @@ namespace TestServerMSI.Application.TestFunctions
 {
     public class RosenbrockTestFunction : ITestFunction
     {
-        public string Name => "Rosenbrock";
+        public string Name { get; set; } = "Rosenbrock";
 
         public double invoke(params double[] arg)
         {
