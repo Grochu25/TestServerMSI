@@ -3,6 +3,10 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Exclude reports but no dir itself
+records/*
+!records/.gitkeep
+
 # User-specific files
 *.rsuser
 *.suo

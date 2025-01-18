@@ -12,9 +12,9 @@ namespace TestServerMSI.Application.Alogrithms
             this.ParamsInfo = [
                 new ParamInfo("population", "wielość populacji obiektów", 1000, 0),
                 new ParamInfo("iterations", "ilość iteracji", 10000, 0),
-                new ParamInfo("C", "parametr 'c' jest specyficzny dla algorytmu. Zalecana wartość z przedziału [0, 1]", 1, 0),
-                new ParamInfo("A", "parametr 'a' jest specyficzny dla algorytmu. Zalecana wartość z przedziału [0, 1]", 1, 0),
-                new ParamInfo("P", "parametr 'p' jest specyficzny dla algorytmu. Zalecana wartość z przedziału [0, 1]", 1, 0),
+                new ParamInfo("C", "parametr 'c' jest specyficzny dla algorytmu.", 1, 0),
+                new ParamInfo("A", "parametr 'a' jest specyficzny dla algorytmu.", 1, 0),
+                new ParamInfo("P", "parametr 'p' jest specyficzny dla algorytmu.", 1, 0),
             ];
             this.XBest = new double[1];
             this.FBest = 10000;
@@ -120,7 +120,7 @@ namespace TestServerMSI.Application.Alogrithms
             this.Eval();
             this.XBest = this.bestButterfly.X;
             this.FBest = this.bestButterfly.FitnessValue;
-            Debug.WriteLine("BOA finished: "+XBest.ToString()+" : "+FBest);
+            Debug.WriteLine("BOA finished: " + XBest.ToString() + " : " + FBest);
             if (File.Exists("savedAlgorithms/BOA.alg"))
                 File.Delete("savedAlgorithms/BOA.alg");
         }
@@ -190,7 +190,7 @@ namespace TestServerMSI.Application.Alogrithms
 
         private void Eval()
         {
-            for(int i = 0; i < butterflies.Length; i++)
+            for (int i = 0; i < butterflies.Length; i++)
             {
                 butterflies[i].FitnessValue = fitness(butterflies[i].X);
                 NumberOfEvaluationFitnessFunction++;

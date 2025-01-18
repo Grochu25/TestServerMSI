@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using TestServerMSI.Application.Alogrithms;
 using TestServerMSI.Application.Interfaces;
+using TestServerMSI.Application.Services;
 
 namespace TestServerMSI.Application
 {
@@ -19,7 +20,7 @@ namespace TestServerMSI.Application
         }
 
         public bool CalculationsInProgress = false;
-        public List<string> reports { get; private set;}
+        public List<string> reports { get; private set; }
         public List<double[]> parametersList { get; private set; }
         public int iterationsMade = 0;
         public int functionsChecked = 0;
@@ -28,7 +29,8 @@ namespace TestServerMSI.Application
 
         public IOptimizationAlgorithm CurrentAlgorithm;
 
-        private CalculationProcessor() {
+        private CalculationProcessor()
+        {
             reports = new List<string>();
             parametersList = new List<double[]>();
         }
@@ -36,13 +38,13 @@ namespace TestServerMSI.Application
         public void stopCalculations()
         {
             stop = true;
-            if(CurrentAlgorithm != null)
+            if (CurrentAlgorithm != null)
                 CurrentAlgorithm.Stop = true;
             CalculationsInProgress = false;
         }
 
         public void oneAlgorithmManyFunctions(IOptimizationAlgorithm algorithm,
-            double[,] domain, 
+            double[,] domain,
             double[][] parameters,
             ITestFunction[] functions,
             int iterationsMade = 0,
@@ -77,6 +79,10 @@ namespace TestServerMSI.Application
                 CalculationsInProgress = false;
                 if (File.Exists("savedAlgorithms/OAMF.dto"))
                     File.Delete("savedAlgorithms/OAMF.dto");
+                this.CurrentAlgorithm.stringReportGenerator.Alg = this.CurrentAlgorithm;
+                this.CurrentAlgorithm.stringReportGenerator.GenerateReport("records/test.txt"); // GEN REPORT TEXT
+                this.CurrentAlgorithm.pdfReportGenerator.Alg = this.CurrentAlgorithm;
+                this.CurrentAlgorithm.pdfReportGenerator.GenerateReport("records/test.pdf"); // GEN REPORT PDF
             });
             thread.Start();
         }
@@ -86,12 +92,13 @@ namespace TestServerMSI.Application
             double[] row = new double[parameters.Length];
             for (int i = 0; i < parameters.Length; i++)
                 row[i] = parameters[i][0];
-            if(!parameters.Contains(row))
+            if (!parameters.Contains(row))
                 parametersList.Add(row);
 
             for (int i = paramNumber; i < parameters.Length; i++)
             {
-                if (parameters[i][0] + parameters[i][2] <= parameters[i][1] && parameters[i][2]>0) {
+                if (parameters[i][0] + parameters[i][2] <= parameters[i][1] && parameters[i][2] > 0)
+                {
                     double[][] newParams = parameters.Select(s => s.ToArray()).ToArray();
                     newParams[i][0] += parameters[i][2];
 
@@ -102,7 +109,7 @@ namespace TestServerMSI.Application
 
         private int parametersCompare(double[] first, double[] second)
         {
-            for(int i=0;i<first.Length;i++)
+            for (int i = 0; i < first.Length; i++)
             {
                 if (first[i] > second[i])
                     return 1;
@@ -115,7 +122,7 @@ namespace TestServerMSI.Application
         public void oneFunctionManyAlgoritms(ITestFunction function,
             double[,] domain,
             double[][] parameters,
-            IOptimizationAlgorithm[] algorithms, 
+            IOptimizationAlgorithm[] algorithms,
             int iterationsMade = 0,
             int algorithmsChecked = 0)
         {
@@ -126,7 +133,7 @@ namespace TestServerMSI.Application
             thread = new Thread(() =>
             {
                 CalculationsInProgress = true;
-                for(int i= iterationsMade; i<algorithms.Length; i++)
+                for (int i = iterationsMade; i < algorithms.Length; i++)
                 {
                     if (stop) return;
                     CurrentAlgorithm = algorithms[i];
@@ -170,7 +177,7 @@ namespace TestServerMSI.Application
             {
                 using (StreamWriter sw = new StreamWriter(fs))
                 {
-                    foreach(string line in lines)
+                    foreach (string line in lines)
                         sw.WriteLine(line);
                     sw.Flush();
                 }
