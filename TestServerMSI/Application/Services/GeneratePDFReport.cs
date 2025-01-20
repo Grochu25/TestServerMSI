@@ -11,6 +11,7 @@ namespace TestServerMSI.Application.Services
         public uint Precision { get; set; }
         public string ReportString { get; set; }
         public IOptimizationAlgorithm Alg { get; set; }
+        public int marginSize = 20;
 
         public string FloatFormat { get; set; }
 
@@ -31,21 +32,36 @@ namespace TestServerMSI.Application.Services
                 return;
             }
             this.FloatFormat = this.buildFloatFormat();
-            string bestString = $"Best entity:                           {this.stringOfDoubleArray(this.Alg.XBest)}";
-            string fitnessString = $"Its fitness value:                     {this.Alg.FBest.ToString(this.FloatFormat)}";
+
+            string algName = $"Algorithm name: {this.Alg.Name}";
+            string bestString = $"Best entity: {this.stringOfDoubleArray(this.Alg.XBest)}";
+            string fitnessString = $"Its fitness value: {this.Alg.FBest.ToString(this.FloatFormat)}";
             string NumEvalString = $"Number of evaluation fitness function: {this.Alg.NumberOfEvaluationFitnessFunction.ToString()}\n";
 
-            string paramsInfoString = "";
+            string paramsInfoString = this.getParamsInfoString(this.Alg.ParamsInfo);
+            string[] memberContent = new string[] { algName, bestString, fitnessString, NumEvalString, paramsInfoString };
+            this.saveToMember(memberContent);
+
+            List<string> fileContent = new List<string>();
+            fileContent.AddRange(this.wrapText(algName));
+            fileContent.AddRange(this.wrapText(bestString));
+            fileContent.AddRange(this.wrapText(fitnessString));
+            fileContent.AddRange(this.wrapText(NumEvalString));
             foreach (ParamInfo paramInfo in this.Alg.ParamsInfo)
             {
-                paramsInfoString += this.stringOfParamInfo(paramInfo) + "\n";
+                fileContent.AddRange(this.stringOfParamInfoPdf(paramInfo));
             }
+            this.saveToFile(path, fileContent.ToArray());
+        }
 
-            string[] content = new string[] { bestString, fitnessString, NumEvalString, paramsInfoString };
-            this.saveToMember(content);
-
-
-            this.saveToFile(path, content);
+        public string buildFloatFormat()
+        {
+            string retVal = "0.";
+            for (uint i = 0; i < this.Precision; ++i)
+            {
+                retVal += "0";
+            }
+            return retVal;
         }
 
         public string stringOfDoubleArray(double[] source)
@@ -63,24 +79,25 @@ namespace TestServerMSI.Application.Services
             return retVal;
         }
 
+        public string getParamsInfoString(ParamInfo[] paramsInfo)
+        {
+            string paramsInfoString = "";
+            foreach (ParamInfo paramInfo in paramsInfo)
+            {
+                paramsInfoString += this.stringOfParamInfo(paramInfo) + "\n";
+            }
+            return paramsInfoString;
+        }
+
         public string stringOfParamInfo(ParamInfo paramInfo)
         {
             return String.Format(
-                "Name: {0}:\n\tDescription: {1}\n\tRange:       [{2} - {3}]",
+                "{0}:\n\tDescription: {1}\n\tRange:       [{2} - {3}]",
                 paramInfo.Name,
                 paramInfo.Description,
                 paramInfo.LowerBoundary,
                 paramInfo.UpperBoundary
             );
-        }
-        public string buildFloatFormat()
-        {
-            string retVal = "0.";
-            for (uint i = 0; i < this.Precision; ++i)
-            {
-                retVal += "0";
-            }
-            return retVal;
         }
 
         public void saveToMember(string[] content)
@@ -90,6 +107,32 @@ namespace TestServerMSI.Application.Services
             {
                 this.ReportString += line + "\n";
             }
+        }
+
+        // TODO: Implement this if needed.
+        // Function that wraps long text cuz pdf doesn't support '\n'
+        // and doens't wraps by itself.
+        public string[] wrapText(string text)
+        {
+            return new string[] { text };
+        }
+
+
+        public string[] stringOfParamInfoPdf(ParamInfo paramInfo)
+        {
+            string formatted = String.Format(
+                "{0}:\n    Description: {1}\n    Range:       [{2} - {3}]",
+                paramInfo.Name,
+                paramInfo.Description,
+                paramInfo.LowerBoundary,
+                paramInfo.UpperBoundary
+            );
+            List<string> retVal = new List<string>();
+            foreach (string line in formatted.Split("\n"))
+            {
+                retVal.AddRange(this.wrapText(line));
+            }
+            return retVal.ToArray();
         }
 
         public void saveToFile(string path, string[] content)

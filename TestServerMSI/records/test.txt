@@ -1,5 +1,6 @@
-Best entity:                           [1,4142935353; 1,4141186850; 1,4141567310; 1,4141642576; 1,4142878144]
-Its fitness value:                     0,0000000266
+Algorithm name:                        Archimedes Optimization Algorithm
+Best entity:                           [1,4142819962; 1,4141922694; 1,4142009133; 1,4141892065; 1,4141144409]
+Its fitness value:                     0,0000000157
 Number of evaluation fitness function: 15050
 
 Name: population:

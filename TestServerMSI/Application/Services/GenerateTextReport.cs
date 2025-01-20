@@ -32,6 +32,7 @@ namespace TestServerMSI.Application.Services
             }
             this.FloatFormat = this.buildFloatFormat();
 
+            string algName = $"Algorithm name:                        {this.Alg.Name}";
             string bestString = $"Best entity:                           {this.stringOfDoubleArray(this.Alg.XBest)}";
             string fitnessString = $"Its fitness value:                     {this.Alg.FBest.ToString(this.FloatFormat)}";
             string NumEvalString = $"Number of evaluation fitness function: {this.Alg.NumberOfEvaluationFitnessFunction.ToString()}\n";
@@ -42,7 +43,7 @@ namespace TestServerMSI.Application.Services
                 paramsInfoString += this.stringOfParamInfo(paramInfo) + "\n";
             }
 
-            string[] content = new string[] { bestString, fitnessString, NumEvalString, paramsInfoString };
+            string[] content = new string[] { algName, bestString, fitnessString, NumEvalString, paramsInfoString };
             this.saveToMember(content);
 
 
