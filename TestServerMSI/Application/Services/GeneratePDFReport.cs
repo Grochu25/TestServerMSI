@@ -94,7 +94,7 @@ namespace TestServerMSI.Application.Services
         public string stringOfParamInfo(ParamInfo paramInfo)
         {
             return String.Format(
-                "{0}:\n    Description: {1}\n    Range:       [{2} - {3}]\n      Used: {4}",
+                "{0}:\n    Description: {1}\n    Range:       [{2} - {3}]\n    Used:         {4}",
                 paramInfo.Name,
                 paramInfo.Description,
                 paramInfo.LowerBoundary,

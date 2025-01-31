@@ -68,7 +68,9 @@ namespace TestServerMSI.Application.Alogrithms
             this.domain = domain;
             this.dimensions = domain.GetLength(1);
             this.population = parameters[0];
+            this.ParametersUsedValues["population"] = this.population;
             this.iterations = parameters[1];
+            this.ParametersUsedValues["iterations"] = this.iterations;
             if (parameters.Length >= 3) this.a = parameters[2];
             if (parameters.Length >= 4) this.c = parameters[3];
             if (parameters.Length >= 5) this.p = parameters[4];
