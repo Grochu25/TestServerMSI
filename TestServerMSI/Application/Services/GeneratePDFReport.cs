@@ -94,11 +94,12 @@ namespace TestServerMSI.Application.Services
         public string stringOfParamInfo(ParamInfo paramInfo)
         {
             return String.Format(
-                "{0}:\n\tDescription: {1}\n\tRange:       [{2} - {3}]",
+                "{0}:\n    Description: {1}\n    Range:       [{2} - {3}]\n      Used: {4}",
                 paramInfo.Name,
                 paramInfo.Description,
                 paramInfo.LowerBoundary,
-                paramInfo.UpperBoundary
+                paramInfo.UpperBoundary,
+                this.Alg.ParametersUsedValues[paramInfo.Name]
             );
         }
 
@@ -122,13 +123,7 @@ namespace TestServerMSI.Application.Services
 
         public string[] stringOfParamInfoPdf(ParamInfo paramInfo)
         {
-            string formatted = String.Format(
-                "{0}:\n    Description: {1}\n    Range:       [{2} - {3}]",
-                paramInfo.Name,
-                paramInfo.Description,
-                paramInfo.LowerBoundary,
-                paramInfo.UpperBoundary
-            );
+            string formatted = this.stringOfParamInfo(paramInfo);
             List<string> retVal = new List<string>();
             foreach (string line in formatted.Split("\n"))
             {
@@ -153,7 +148,6 @@ namespace TestServerMSI.Application.Services
                 gfx.DrawString(line, font, XBrushes.Black, 20, offsetY);
                 offsetY += 20;
             }
-
             document.Save(path);
         }
     }

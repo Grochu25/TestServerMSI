@@ -7,7 +7,8 @@ namespace TestServerMSI.Application.Alogrithms
 {
     public class AOA : IOptimizationAlgorithm
     {
-        public AOA() {
+        public AOA()
+        {
             Name = "Archimedes Optimization Algorithm";
             ParamsInfo = [
                 new ParamInfo("population", "wielość populacji obiektów",10000,0),
@@ -24,6 +25,7 @@ namespace TestServerMSI.Application.Alogrithms
             CurrentIteration = 0;
             Population = [[0.0]];
             PopulationValues = [0.0];
+            this.ParametersUsedValues = new Dictionary<string, double>();
 
             stringReportGenerator = new GenerateTextReport();
             pdfReportGenerator = new GeneratePDFReport();
@@ -45,6 +47,7 @@ namespace TestServerMSI.Application.Alogrithms
         public double[][] Population { get; set; }
         public double[] PopulationValues { get; set; }
         public bool Stop { get; set; } = false;
+        public Dictionary<string, double> ParametersUsedValues { get; set; }
         // Koniec
 
         private int dimensions = 1;
@@ -70,10 +73,14 @@ namespace TestServerMSI.Application.Alogrithms
             dimensions = domain.GetLength(1);
             population = parameters[0];
             iterations = parameters[1];
-            if(parameters.Length >= 3) C1 = parameters[2];
+            if (parameters.Length >= 3) C1 = parameters[2];
             if (parameters.Length >= 4) C2 = parameters[3];
             if (parameters.Length >= 5) C3 = parameters[4];
             if (parameters.Length >= 6) C4 = parameters[5];
+            this.ParametersUsedValues["C1"] = this.C1;
+            this.ParametersUsedValues["C2"] = this.C2;
+            this.ParametersUsedValues["C3"] = this.C3;
+            this.ParametersUsedValues["C4"] = this.C4;
             XBest = new double[dimensions];
             FBest = 1;
             NumberOfEvaluationFitnessFunction = 0;
@@ -94,8 +101,8 @@ namespace TestServerMSI.Application.Alogrithms
                     objects[i] = new Floating(
                         Population[i].Take(dimensions).ToArray(),
                         Population[i].Skip(dimensions).Take(dimensions).ToArray(),
-                        Population[i].Skip(dimensions*2).Take(dimensions).ToArray(),
-                        Population[i].Skip(dimensions*3).Take(dimensions).ToArray()
+                        Population[i].Skip(dimensions * 2).Take(dimensions).ToArray(),
+                        Population[i].Skip(dimensions * 3).Take(dimensions).ToArray()
                     );
                     objects[i].FitnessValue = PopulationValues[i];
                 }
@@ -196,7 +203,7 @@ namespace TestServerMSI.Application.Alogrithms
                 writer.SaveToFileStateOfAlgorithm("savedAlgorithms/AOA.alg");
                 Debug.WriteLine("test run: " + CurrentIteration);
                 CurrentIteration++;
-                if(Stop) return;
+                if (Stop) return;
             }
             Debug.WriteLine("AOA finished " + XBest.ToString() + " : " + FBest);
             //Tutaj plik z zapisanym algorytmem jest usuwany, bo już nie będzie potrzebny
@@ -211,9 +218,9 @@ namespace TestServerMSI.Application.Alogrithms
                 for (int j = 0; j < dimensions; j++)
                 {
                     Population[i][j] = objects[i].X[j];
-                    Population[i][j+dimensions] = objects[i].Den[j];
-                    Population[i][j+dimensions*2] = objects[i].Vol[j];
-                    Population[i][j+dimensions*3] = objects[i].Acc[j];
+                    Population[i][j + dimensions] = objects[i].Den[j];
+                    Population[i][j + dimensions * 2] = objects[i].Vol[j];
+                    Population[i][j + dimensions * 3] = objects[i].Acc[j];
                 }
 
                 PopulationValues[i] = objects[i].FitnessValue;

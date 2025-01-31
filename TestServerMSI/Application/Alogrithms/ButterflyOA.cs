@@ -12,8 +12,8 @@ namespace TestServerMSI.Application.Alogrithms
             this.ParamsInfo = [
                 new ParamInfo("population", "wielość populacji obiektów", 1000, 0),
                 new ParamInfo("iterations", "ilość iteracji", 10000, 0),
-                new ParamInfo("C", "parametr 'c' jest specyficzny dla algorytmu.", 1, 0),
                 new ParamInfo("A", "parametr 'a' jest specyficzny dla algorytmu.", 1, 0),
+                new ParamInfo("C", "parametr 'c' jest specyficzny dla algorytmu.", 1, 0),
                 new ParamInfo("P", "parametr 'p' jest specyficzny dla algorytmu.", 1, 0),
             ];
             this.XBest = new double[1];
@@ -22,6 +22,7 @@ namespace TestServerMSI.Application.Alogrithms
             this.CurrentIteration = 0;
             this.Population = [[0]];
             this.PopulationValues = [0];
+            this.ParametersUsedValues = new Dictionary<string, double>();
 
             this.stringReportGenerator = new GenerateTextReport();
             this.pdfReportGenerator = new GeneratePDFReport();
@@ -44,14 +45,15 @@ namespace TestServerMSI.Application.Alogrithms
         public double[][] Population { get; set; }
         public double[] PopulationValues { get; set; }
         public bool Stop { get; set; } = false;
+        public Dictionary<string, double> ParametersUsedValues { get; set; }
         // Koniec
 
         private int dimensions = 1;
         private double population = 0;
         private double iterations = 0.0;
-        private double a = 0.0;
-        private double c = 0.0;
-        private double p = 0.0;
+        private double a = 0.5;
+        private double c = 0.5;
+        private double p = 0.5;
 
         private fitnessFunction fitness;
         private double[,] domain;
@@ -70,6 +72,9 @@ namespace TestServerMSI.Application.Alogrithms
             if (parameters.Length >= 3) this.a = parameters[2];
             if (parameters.Length >= 4) this.c = parameters[3];
             if (parameters.Length >= 5) this.p = parameters[4];
+            this.ParametersUsedValues["A"] = this.a;
+            this.ParametersUsedValues["C"] = this.c;
+            this.ParametersUsedValues["P"] = this.p;
             this.XBest = new double[this.dimensions];
             this.FBest = 1;
             this.NumberOfEvaluationFitnessFunction = 0;
@@ -101,7 +106,6 @@ namespace TestServerMSI.Application.Alogrithms
 
         public void runAlgorithm()
         {
-
             for (int i = CurrentIteration; i < this.iterations; ++i)
             {
                 this.Eval();
