@@ -220,7 +220,8 @@ namespace TestServerMSI.Application
 
             string filename = generateRaportName(algorithm, fucntion, parameters);
             this.CurrentAlgorithm.stringReportGenerator.GenerateReport($"records/{saveDirectory}/{filename}.txt"); // GEN REPORT TEXT
-            this.CurrentAlgorithm.pdfReportGenerator.Alg = this.CurrentAlgorithm;
+            this.CurrentAlgorithm.pdfReportGenerator.Alg = algorithm;
+            this.CurrentAlgorithm.pdfReportGenerator.TF = fucntion;
             this.CurrentAlgorithm.pdfReportGenerator.GenerateReport($"records/{saveDirectory}/{filename}.pdf"); // GEN REPORT PDF
         }
 

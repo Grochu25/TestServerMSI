@@ -11,6 +11,7 @@ namespace TestServerMSI.Application.Services
         public uint Precision { get; set; }
         public string ReportString { get; set; }
         public IOptimizationAlgorithm Alg { get; set; }
+        public ITestFunction TF { get; set; }
         public int marginSize = 20;
 
         public string FloatFormat { get; set; }
@@ -37,9 +38,10 @@ namespace TestServerMSI.Application.Services
             string bestString = $"Best entity: {this.stringOfDoubleArray(this.Alg.XBest)}";
             string fitnessString = $"Its fitness value: {this.Alg.FBest.ToString(this.FloatFormat)}";
             string NumEvalString = $"Number of evaluation fitness function: {this.Alg.NumberOfEvaluationFitnessFunction.ToString()}\n";
+            string testFunction = $"Test function name: {this.TF.Name}\n";
 
             string paramsInfoString = this.getParamsInfoString(this.Alg.ParamsInfo);
-            string[] memberContent = new string[] { algName, bestString, fitnessString, NumEvalString, paramsInfoString };
+            string[] memberContent = new string[] { algName, bestString, fitnessString, NumEvalString, testFunction, paramsInfoString };
             this.saveToMember(memberContent);
 
             List<string> fileContent = new List<string>();
