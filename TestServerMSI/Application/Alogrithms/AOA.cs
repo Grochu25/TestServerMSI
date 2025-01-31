@@ -70,10 +70,10 @@ namespace TestServerMSI.Application.Alogrithms
             dimensions = domain.GetLength(1);
             population = parameters[0];
             iterations = parameters[1];
-            C1 = parameters[2];
-            C2 = parameters[3];
-            C3 = parameters[4];
-            C4 = parameters[5];
+            if(parameters.Length >= 3) C1 = parameters[2];
+            if (parameters.Length >= 4) C2 = parameters[3];
+            if (parameters.Length >= 5) C3 = parameters[4];
+            if (parameters.Length >= 6) C4 = parameters[5];
             XBest = new double[dimensions];
             FBest = 1;
             NumberOfEvaluationFitnessFunction = 0;

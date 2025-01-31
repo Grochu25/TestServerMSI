@@ -22,7 +22,7 @@ namespace TestServerMSI.Application.DLLs
                 foreach (var x in from t in assembly.GetTypes() where t.IsClass && t.GetInterface("IOptimizationAlgorithm", true) != null select t)
                 {
                     AlgorithmCapsule capsule = new AlgorithmCapsule(Activator.CreateInstance(x), fitnessType);
-                    capsule.Name = file.Name.Substring(0, file.Name.IndexOf('.')) + ":" + capsule.Name;
+                    capsule.Name = file.Name.Substring(0, file.Name.Length-4) + ":" + capsule.Name;
                     algorithms.Add(capsule);
                 }
             }

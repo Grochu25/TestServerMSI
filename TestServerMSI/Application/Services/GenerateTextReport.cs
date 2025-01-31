@@ -8,6 +8,7 @@ namespace TestServerMSI.Application.Services
         public uint Precision { get; set; }
         public string ReportString { get; set; }
         public IOptimizationAlgorithm Alg { get; set; }
+        public ITestFunction TF { get; set; }
 
         public string FloatFormat { get; set; }
 
@@ -32,18 +33,19 @@ namespace TestServerMSI.Application.Services
             }
             this.FloatFormat = this.buildFloatFormat();
 
-            string algName = $"Algorithm name:                        {this.Alg.Name}";
-            string bestString = $"Best entity:                           {this.stringOfDoubleArray(this.Alg.XBest)}";
-            string fitnessString = $"Its fitness value:                     {this.Alg.FBest.ToString(this.FloatFormat)}";
-            string NumEvalString = $"Number of evaluation fitness function: {this.Alg.NumberOfEvaluationFitnessFunction.ToString()}\n";
+            string algName =        $"Algorithm name:                        {this.Alg.Name}";
+            string bestString =     $"Best entity:                           {this.stringOfDoubleArray(this.Alg.XBest)}";
+            string fitnessString =  $"Its fitness value:                     {this.Alg.FBest.ToString(this.FloatFormat)}";
+            string NumEvalString =  $"Number of evaluation fitness function: {this.Alg.NumberOfEvaluationFitnessFunction.ToString()}\n";
+            string testFunction =   $"Test function name:                    {this.TF.Name}\n";
 
-            string paramsInfoString = "";
-            foreach (ParamInfo paramInfo in this.Alg.ParamsInfo)
-            {
-                paramsInfoString += this.stringOfParamInfo(paramInfo) + "\n";
-            }
+            //string paramsInfoString = "";
+            //foreach (ParamInfo paramInfo in this.Alg.ParamsInfo)
+            //{
+            //    paramsInfoString += this.stringOfParamInfo(paramInfo) + "\n";
+            //}
 
-            string[] content = new string[] { algName, bestString, fitnessString, NumEvalString, paramsInfoString };
+            string[] content = new string[] { algName, bestString, fitnessString, NumEvalString, testFunction };//, paramsInfoString };
             this.saveToMember(content);
 
 
@@ -97,6 +99,8 @@ namespace TestServerMSI.Application.Services
 
         private void saveToFile(string path, string[] content)
         {
+
+            if (!Directory.Exists(Path.GetDirectoryName(path))) Directory.CreateDirectory(Path.GetDirectoryName(path));
             using (StreamWriter reportFile = new StreamWriter(path))
             {
                 foreach (string line in content)

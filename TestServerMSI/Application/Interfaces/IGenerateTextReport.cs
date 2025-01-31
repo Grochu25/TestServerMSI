@@ -6,6 +6,7 @@ namespace TestServerMSI.Application.Interfaces
         public uint Precision { get; set; }
         public string ReportString { get; set; }
         public IOptimizationAlgorithm Alg { get; set; }
+        public ITestFunction TF { get; set; }
 
         public string FloatFormat { get; set; }
 

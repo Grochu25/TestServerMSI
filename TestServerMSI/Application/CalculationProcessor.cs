@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Diagnostics;
+using System.Security.Cryptography;
 using TestServerMSI.Application.Alogrithms;
 using TestServerMSI.Application.Interfaces;
 using TestServerMSI.Application.Services;
@@ -22,6 +23,7 @@ namespace TestServerMSI.Application
         public bool CalculationsInProgress = false;
         public List<string> reports { get; private set; }
         public List<double[]> parametersList { get; private set; }
+        public string saveDirectory { get; set; } = "";
         public int iterationsMade = 0;
         public int functionsChecked = 0;
         private bool stop = false;
@@ -70,6 +72,8 @@ namespace TestServerMSI.Application
                         reports.Add(algorithm.stringReportGenerator.ReportString);
                         iterationsMade++;
                         saveIterationsToFile("savedAlgorithms/OAMF.dto", iterationsMade);
+
+                        generateReports(algorithm, functions[i], parametersList[j]);
                     }
                     functionsChecked++;
                     iterationsMade = 0;
@@ -79,10 +83,6 @@ namespace TestServerMSI.Application
                 CalculationsInProgress = false;
                 if (File.Exists("savedAlgorithms/OAMF.dto"))
                     File.Delete("savedAlgorithms/OAMF.dto");
-                this.CurrentAlgorithm.stringReportGenerator.Alg = this.CurrentAlgorithm;
-                this.CurrentAlgorithm.stringReportGenerator.GenerateReport("records/test.txt"); // GEN REPORT TEXT
-                this.CurrentAlgorithm.pdfReportGenerator.Alg = this.CurrentAlgorithm;
-                this.CurrentAlgorithm.pdfReportGenerator.GenerateReport("records/test.pdf"); // GEN REPORT PDF
             });
             thread.Start();
         }
@@ -143,6 +143,8 @@ namespace TestServerMSI.Application
                     reports.Add(algorithms[i].stringReportGenerator.ReportString);
                     iterationsMade++;
                     saveIterationsToFile("savedAlgorithms/OFMA.dto", iterationsMade);
+
+                    generateReports(algorithms[i], function, parameters[i]);
                 }
                 CalculationsInProgress = false;
                 if (File.Exists("savedAlgorithms/OFMA.dto"))
@@ -172,7 +174,7 @@ namespace TestServerMSI.Application
                     }
                 }
             }
-            lines[lines.Count - 2] = iterations.ToString();
+            lines[lines.Count - 3] = iterations.ToString();
             using (FileStream fs = new FileStream(path, FileMode.Open))
             {
                 using (StreamWriter sw = new StreamWriter(fs))
@@ -199,7 +201,7 @@ namespace TestServerMSI.Application
                     }
                 }
             }
-            lines[lines.Count - 1] = functionsChecked.ToString();
+            lines[lines.Count - 2] = functionsChecked.ToString();
             using (FileStream fs = new FileStream(path, FileMode.Open))
             {
                 using (StreamWriter sw = new StreamWriter(fs))
@@ -209,6 +211,26 @@ namespace TestServerMSI.Application
                     sw.Flush();
                 }
             }
+        }
+
+        private void generateReports(IOptimizationAlgorithm algorithm, ITestFunction fucntion, double[] parameters)
+        {
+            this.CurrentAlgorithm.stringReportGenerator.Alg = algorithm;
+            this.CurrentAlgorithm.stringReportGenerator.TF = fucntion;
+
+            string filename = generateRaportName(algorithm, fucntion, parameters);
+            this.CurrentAlgorithm.stringReportGenerator.GenerateReport($"records/{saveDirectory}/{filename}.txt"); // GEN REPORT TEXT
+            this.CurrentAlgorithm.pdfReportGenerator.Alg = this.CurrentAlgorithm;
+            this.CurrentAlgorithm.pdfReportGenerator.GenerateReport($"records/{saveDirectory}/{filename}.pdf"); // GEN REPORT PDF
+        }
+
+        private string generateRaportName(IOptimizationAlgorithm algorithm, ITestFunction fucntion, double[] parameters)
+        {
+            string filename = algorithm.Name +"_"+ fucntion.Name;
+            foreach (var param in parameters)
+                filename += '_'+param.ToString();
+            filename = filename.Replace(' ', '_').Replace(',', '.');
+            return filename;
         }
     }
 }

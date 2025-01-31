@@ -28,6 +28,7 @@ namespace TestServerMSI.Application
 
             str += 0 + "\n";
             str += 0 + "\n";
+            str += CalculationProcessor.Instance.saveDirectory + "\n";
             StreamWriter sw = new StreamWriter("savedAlgorithms/OAMF.dto");
             sw.Write(str);
             sw.Close();
@@ -57,6 +58,7 @@ namespace TestServerMSI.Application
 
             str += 0 + "\n";
             str += 0 + "\n";
+            str += CalculationProcessor.Instance.saveDirectory + "\n";
             StreamWriter sw = new StreamWriter("savedAlgorithms/OFMA.dto");
             sw.Write(str);
             sw.Close();
@@ -86,6 +88,7 @@ namespace TestServerMSI.Application
             oamfExtended.OneAlgorithmManyFunctions = oamf;
             oamfExtended.IterationsMade = int.Parse(sr.ReadLine());
             oamfExtended.FunctionsChecked = int.Parse(sr.ReadLine());
+            CalculationProcessor.Instance.saveDirectory = sr.ReadLine();
 
             sr.Close();
             return oamfExtended;
@@ -115,6 +118,7 @@ namespace TestServerMSI.Application
             ofmaExtended.OneFunctionManyAlgorithms = ofma;
             ofmaExtended.IterationsMade = int.Parse(sr.ReadLine());
             ofmaExtended.AlgorithmsChecked = int.Parse(sr.ReadLine());
+            CalculationProcessor.Instance.saveDirectory = sr.ReadLine();
 
             sr.Close();
             return ofmaExtended;

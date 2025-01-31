@@ -67,9 +67,9 @@ namespace TestServerMSI.Application.Alogrithms
             this.dimensions = domain.GetLength(1);
             this.population = parameters[0];
             this.iterations = parameters[1];
-            this.a = parameters[2];
-            this.c = parameters[3];
-            this.p = parameters[4];
+            if (parameters.Length >= 3) this.a = parameters[2];
+            if (parameters.Length >= 4) this.c = parameters[3];
+            if (parameters.Length >= 5) this.p = parameters[4];
             this.XBest = new double[this.dimensions];
             this.FBest = 1;
             this.NumberOfEvaluationFitnessFunction = 0;

@@ -23,11 +23,11 @@ namespace TestServerMSI.Controllers
                         return Ok("In progress");
                     else
                     {
-                        return Ok(CalculationProcessor.Instance.reports);
+                        return Ok("Reports are ready");
                     }
                 case "stop":
                     CalculationProcessor.Instance.stopCalculations();
-                    return Ok();
+                    return Ok("Calculations had been stopped");
                 case "resume":
                     return resumeSavedState();
                 case "last":
@@ -74,6 +74,7 @@ namespace TestServerMSI.Controllers
             {
                 if (!Directory.Exists("savedAlgorithms")) Directory.CreateDirectory("savedAlgorithms");
                 new DirectoryInfo("savedAlgorithms").GetFiles().ToList().ForEach(f => f.Delete());
+                CalculationProcessor.Instance.saveDirectory = DateTime.Now.ToString("HH_mm_ss_dd_MM_yyyy");
                 QueueSavers.saveOAMFdtoToFile(oamf);
                 if(!runOAMF(oamf))
                     return StatusCode(500);
@@ -91,6 +92,7 @@ namespace TestServerMSI.Controllers
             {
                 if (!Directory.Exists("savedAlgorithms")) Directory.CreateDirectory("savedAlgorithms");
                 new DirectoryInfo("savedAlgorithms").GetFiles().ToList().ForEach(f => f.Delete());
+                CalculationProcessor.Instance.saveDirectory = DateTime.Now.ToString("HH_mm_ss_dd_MM_yyyy");
                 QueueSavers.saveOFMAdtoToFile(ofma);
                 if(!runOFMA(ofma))
                     return StatusCode(500);

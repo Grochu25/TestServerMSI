@@ -11,19 +11,10 @@ namespace TestServerMSI.Controllers
     [Route("[controller]")]
     public class AlgorithmsController : Controller
     {
-        List<IOptimizationAlgorithm> algorithms;
-        List<string> algorithmNames;
-
-        public AlgorithmsController()
-        {
-            algorithms = Algorithms.getAlgorithmList();
-            algorithmNames = new List<string>(algorithms.Select(x => x.Name));
-        }
-
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(algorithms);
+            return Ok(Algorithms.getAlgorithmList());
         }
 
         [HttpGet("{name}")]
