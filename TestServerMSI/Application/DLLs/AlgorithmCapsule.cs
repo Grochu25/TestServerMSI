@@ -92,7 +92,11 @@ namespace TestServerMSI.Application.DLLs
             get => (bool)_algorithmType.GetProperty("Stop").GetValue(_algorithmFromDLL);
             set => _algorithmType.GetProperty("Stop").SetValue(_algorithmFromDLL, value);
         }
-        public Dictionary<string, double> ParametersUsedValues { get; set; }
+        public Dictionary<string, double> ParametersUsedValues
+        {
+            get => (Dictionary<string, double>)_algorithmType.GetProperty("ParametersUsedValues").GetValue(_algorithmFromDLL);
+            set => _algorithmType.GetProperty("ParametersUsedValues").SetValue(_algorithmFromDLL, value);
+        }
 
         public void Solve(fitnessFunction f, double[,] domain, params double[] parameters)
         {
