@@ -8,7 +8,7 @@ namespace TestServerMSI.Application.Services
 {
     public class GeneratePDFReport : IGeneratePDFReport
     {
-        public uint Precision { get; set; }
+        public uint Precision { get; set; } = 10;
         public string ReportString { get; set; }
         public IOptimizationAlgorithm Alg { get; set; }
         public ITestFunction TF { get; set; }
@@ -37,8 +37,8 @@ namespace TestServerMSI.Application.Services
             string algName = $"Algorithm name: {this.Alg.Name}";
             string bestString = $"Best entity: {this.stringOfDoubleArray(this.Alg.XBest)}";
             string fitnessString = $"Its fitness value: {this.Alg.FBest.ToString(this.FloatFormat)}";
-            string NumEvalString = $"Number of evaluation fitness function: {this.Alg.NumberOfEvaluationFitnessFunction.ToString()}\n";
-            string testFunction = $"Test function name: {this.TF.Name}\n";
+            string NumEvalString = $"Number of evaluation fitness function: {this.Alg.NumberOfEvaluationFitnessFunction.ToString()}";
+            string testFunction = $"Test function name: {this.TF.Name}";
 
             string paramsInfoString = this.getParamsInfoString(this.Alg.ParamsInfo);
             string[] memberContent = new string[] { algName, bestString, fitnessString, NumEvalString, testFunction, paramsInfoString };
@@ -49,6 +49,7 @@ namespace TestServerMSI.Application.Services
             fileContent.AddRange(this.wrapText(bestString));
             fileContent.AddRange(this.wrapText(fitnessString));
             fileContent.AddRange(this.wrapText(NumEvalString));
+            fileContent.AddRange(this.wrapText(testFunction));
             foreach (ParamInfo paramInfo in this.Alg.ParamsInfo)
             {
                 fileContent.AddRange(this.stringOfParamInfoPdf(paramInfo));
