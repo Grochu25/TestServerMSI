@@ -230,7 +230,7 @@ namespace TestServerMSI.Application
             string filename = algorithm.Name +"_"+ fucntion.Name;
             foreach (var param in parameters)
                 filename += '_'+param.ToString();
-            filename = filename.Replace(' ', '_').Replace(',', '.');
+            filename = filename.Replace(' ', '_').Replace(',', '.').Replace(':', '_');
             return filename;
         }
     }

@@ -25,6 +25,9 @@ namespace TestServerMSI.Application.DLLs
 
             var readerCapsule = Encapsulator.generateCapsule(readerType, typeof(StateReader), "LoadFromFileStateOfAlgorithm", "StateReaderCapsule");
             _algorithmType.GetProperty("reader").SetValue(_algorithmFromDLL, readerCapsule);
+
+            stringReportGenerator = new GenerateTextReport();
+            pdfReportGenerator = new GeneratePDFReport();
         }
         public string Name
         {
@@ -102,7 +105,9 @@ namespace TestServerMSI.Application.DLLs
         {
             MethodInfo solveMethod = _algorithmType.GetMethod("Solve");
             if (_fitnessType == null)
+            {
                 solveMethod.Invoke(_algorithmFromDLL, [f, domain, parameters]);
+            }
             else
             {
                 var ff = Delegate.CreateDelegate(_fitnessType, f.Target, f.Method);

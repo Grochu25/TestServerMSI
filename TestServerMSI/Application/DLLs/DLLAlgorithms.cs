@@ -18,7 +18,7 @@ namespace TestServerMSI.Application.DLLs
                 if(file.Extension != ".dll")
                     continue;
                 assembly = Assembly.LoadFrom(file.FullName);
-                Type? fitnessType = assembly.GetType("fitnessFunction");
+                Type? fitnessType = (from t in assembly.GetTypes() where t.Name == "fitnessFunction" select t).ToArray()[0];
                 foreach (var x in from t in assembly.GetTypes() where t.IsClass && t.GetInterface("IOptimizationAlgorithm", true) != null select t)
                 {
                     AlgorithmCapsule capsule = new AlgorithmCapsule(Activator.CreateInstance(x), fitnessType);
