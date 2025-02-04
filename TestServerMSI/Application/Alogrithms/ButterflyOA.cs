@@ -10,8 +10,8 @@ namespace TestServerMSI.Application.Alogrithms
         {
             this.Name = "Butterfy Optimization Algorithm";
             this.ParamsInfo = [
-                new ParamInfo("population", "wielość populacji obiektów", 1000, 0),
-                new ParamInfo("iterations", "ilość iteracji", 10000, 0),
+                new ParamInfo("population", "wielość populacji obiektów", 1000, 1),
+                new ParamInfo("iterations", "ilość iteracji", 10000, 1),
                 new ParamInfo("A", "parametr 'a' jest specyficzny dla algorytmu.", 1, 0),
                 new ParamInfo("C", "parametr 'c' jest specyficzny dla algorytmu.", 1, 0),
                 new ParamInfo("P", "parametr 'p' jest specyficzny dla algorytmu.", 1, 0),

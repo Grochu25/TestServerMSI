@@ -11,8 +11,8 @@ namespace TestServerMSI.Application.Alogrithms
         {
             Name = "Archimedes Optimization Algorithm";
             ParamsInfo = [
-                new ParamInfo("population", "wielość populacji obiektów",10000,0),
-                new ParamInfo("iterations", "ilość iteracji",10000,0),
+                new ParamInfo("population", "wielość populacji obiektów",10000,1),
+                new ParamInfo("iterations", "ilość iteracji",10000,1),
                 new ParamInfo("C1", "parametr specyficzny dla algorytmu. Zalecane wartości {1, 2}",2,1),
                 new ParamInfo("C2", "parametr specyficzny dla algorytmu. Zalecane wartości {2, 4, 6}",6,2),
                 new ParamInfo("C3", "parametr specyficzny dla algorytmu. Zalecane wartości {1, 2}",2,1),
