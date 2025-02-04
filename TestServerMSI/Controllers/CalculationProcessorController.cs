@@ -31,9 +31,27 @@ namespace TestServerMSI.Controllers
                 case "resume":
                     return resumeSavedState();
                 case "last":
-                    return Ok("pokazać ostatnią próbę");
-                case "downloadSaved":
-                    return Ok("pobieranie zapisanego stanu");
+
+                    if (!Directory.Exists("savedAlgorithms")) Directory.CreateDirectory("savedAlgorithms");
+                    List<string> savedFiles = new DirectoryInfo("savedAlgorithms").GetFiles().Select(f => f.Name).ToList();
+                    if (savedFiles.Contains("OAMF.dto"))
+                    {
+                        OneAlgorithmManyFunctionsDTOExtended? oamf = QueueSavers.readOAMFdtoFromFile();
+                        if (oamf != null)
+                        {
+                            return Ok(oamf);
+                        }
+                    }
+                    else if (savedFiles.Contains("OFMA.dto"))
+                    {
+                        OneFunctionManyAlgorithmsDTOExtended? ofma = QueueSavers.readOFMAdtoFromFile();
+                        if (ofma != null)
+                        {
+                            return Ok(ofma);
+                        }
+                    }
+                    return Ok("No saved states");
+
                 default:
                     return NotFound();
             }
