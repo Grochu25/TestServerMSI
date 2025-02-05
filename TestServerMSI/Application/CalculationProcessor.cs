@@ -83,6 +83,8 @@ namespace TestServerMSI.Application
                 CalculationsInProgress = false;
                 if (File.Exists("savedAlgorithms/OAMF.dto"))
                     File.Delete("savedAlgorithms/OAMF.dto");
+                var test = new ComparisonReportGenerator(saveDirectory);
+                test.generateComparisonReport();
             });
             thread.Start();
         }

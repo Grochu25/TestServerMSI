@@ -104,7 +104,8 @@ namespace TestServerMSI.Controllers
             {
                 if (!Directory.Exists("savedAlgorithms")) Directory.CreateDirectory("savedAlgorithms");
                 new DirectoryInfo("savedAlgorithms").GetFiles().ToList().ForEach(f => f.Delete());
-                CalculationProcessor.Instance.saveDirectory = DateTime.Now.ToString("HH_mm_ss_dd_MM_yyyy");
+                CalculationProcessor.Instance.saveDirectory = createDirectoryName("OAMF", oamf.AlgorithmName, oamf.TestFunctionNames);
+
                 QueueSavers.saveOAMFdtoToFile(oamf);
                 if(!runOAMF(oamf))
                     return StatusCode(500);
@@ -122,7 +123,7 @@ namespace TestServerMSI.Controllers
             {
                 if (!Directory.Exists("savedAlgorithms")) Directory.CreateDirectory("savedAlgorithms");
                 new DirectoryInfo("savedAlgorithms").GetFiles().ToList().ForEach(f => f.Delete());
-                CalculationProcessor.Instance.saveDirectory = DateTime.Now.ToString("HH_mm_ss_dd_MM_yyyy");
+                CalculationProcessor.Instance.saveDirectory = createDirectoryName("OFMA", ofma.TestFunctionName, ofma.AlgorithmNames);
                 QueueSavers.saveOFMAdtoToFile(ofma);
                 if(!runOFMA(ofma))
                     return StatusCode(500);
@@ -169,6 +170,17 @@ namespace TestServerMSI.Controllers
             }
             else
                 return false;
+        }
+
+        private string createDirectoryName(string type, string oneName, string[] manyNames)
+        {
+            string name = DateTime.Now.ToString("HH_mm_ss_dd_MM_yyyy_") + type + "_" + oneName;
+            foreach (string one in manyNames) 
+            {
+                name += "_" + one;
+            }
+
+            return name.Replace(' ', '_').Replace(',', '.').Replace(':', '_');
         }
     }
 }
