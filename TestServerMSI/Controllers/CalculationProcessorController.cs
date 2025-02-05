@@ -16,24 +16,36 @@ namespace TestServerMSI.Controllers
         [HttpGet("{command}")]
         public IActionResult Get(string command)
         {
-            switch(command)
+            if (!Directory.Exists("savedAlgorithms")) Directory.CreateDirectory("savedAlgorithms");
+            List<string> savedFiles = new DirectoryInfo("savedAlgorithms").GetFiles().Select(f => f.Name).ToList();
+
+            switch (command)
             {
                 case "result":
                     if (CalculationProcessor.Instance.CalculationsInProgress)
                         return Ok("In progress");
-                    else
+                    else if (Directory.Exists("savedAlgorithms") && savedFiles.Contains("OAMF.dto"))
                     {
-                        return Ok("Reports are ready");
+                        OneAlgorithmManyFunctionsDTOExtended? oamf = QueueSavers.readOAMFdtoFromFile();
+                        if (oamf != null)
+                            return Ok("Calculations had been stopped");
                     }
+                    else if (Directory.Exists("savedAlgorithms") &&  savedFiles.Contains("OFMA.dto"))
+                    {
+                        OneFunctionManyAlgorithmsDTOExtended? ofma = QueueSavers.readOFMAdtoFromFile();
+                        if (ofma != null)
+                            return Ok("Calculations had been stopped");
+                    }
+                    return Ok("Reports are ready");
+
                 case "stop":
                     CalculationProcessor.Instance.stopCalculations();
                     return Ok("Calculations had been stopped");
+
                 case "resume":
                     return resumeSavedState();
-                case "last":
 
-                    if (!Directory.Exists("savedAlgorithms")) Directory.CreateDirectory("savedAlgorithms");
-                    List<string> savedFiles = new DirectoryInfo("savedAlgorithms").GetFiles().Select(f => f.Name).ToList();
+                case "last":
                     if (savedFiles.Contains("OAMF.dto"))
                     {
                         OneAlgorithmManyFunctionsDTOExtended? oamf = QueueSavers.readOAMFdtoFromFile();

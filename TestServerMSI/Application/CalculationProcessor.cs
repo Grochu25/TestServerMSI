@@ -135,11 +135,11 @@ namespace TestServerMSI.Application
                 CalculationsInProgress = true;
                 for (int i = iterationsMade; i < algorithms.Length; i++)
                 {
-                    if (stop) return;
                     CurrentAlgorithm = algorithms[i];
-                    if (stop) return;
                     Debug.WriteLine("Current Algorithm has been set");
+                    if (stop) return;
                     algorithms[i].Solve(function.invoke, domain, parameters[i]);
+                    if (stop) return;
                     reports.Add(algorithms[i].stringReportGenerator.ReportString);
                     iterationsMade++;
                     saveIterationsToFile("savedAlgorithms/OFMA.dto", iterationsMade);
