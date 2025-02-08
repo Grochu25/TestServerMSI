@@ -13,7 +13,7 @@ namespace TestServerMSI.Application.Services
         private double[] fitnessValue;
         private int[] numberOfEval;
         private string[] functionName;
-        private double[][] parameters; //Dwa pierwsze to zawsze population i iterations
+        public double[][] parameters { get; set; } //Dwa pierwsze to zawsze population i iterations
 
         public ComparisonReportGenerator(string reportDirecotryPath)
         {

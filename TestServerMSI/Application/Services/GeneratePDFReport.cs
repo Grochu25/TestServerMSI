@@ -26,7 +26,8 @@ namespace TestServerMSI.Application.Services
             this.ReportString = String.Empty;
         }
 
-        public void GenerateReport(string path)
+
+        public void GenerateReport(string path, ComparisonReportGenerator comparisonReportGenerator)
         {
             if (this.Alg == null)
             {
@@ -34,6 +35,12 @@ namespace TestServerMSI.Application.Services
             }
             this.FloatFormat = this.buildFloatFormat();
 
+            this.saveToPDF(path);
+            this.saveToPDFTable(path, comparisonReportGenerator);
+        }
+
+        private void saveToPDF(string path)
+        {
             string algName = $"Algorithm name: {this.Alg.Name}";
             string bestString = $"Best entity: {this.stringOfDoubleArray(this.Alg.XBest)}";
             string fitnessString = $"Its fitness value: {this.Alg.FBest.ToString(this.FloatFormat)}";
@@ -55,6 +62,66 @@ namespace TestServerMSI.Application.Services
                 fileContent.AddRange(this.stringOfParamInfoPdf(paramInfo));
             }
             this.saveToFile(path, fileContent.ToArray());
+        }
+
+        private void saveToPDFTable(string path, ComparisonReportGenerator comparisonReportGenerator)
+        {
+            PdfDocument document = new PdfDocument();
+            document.Info.Title = "Comparison Report";
+
+            PdfPage page = document.AddPage();
+            XGraphics gfx = XGraphics.FromPdfPage(page);
+            XFont font = new XFont("Verdana", 10, XFontStyleEx.Regular);
+            XFont fontBold = new XFont("Verdana", 10, XFontStyleEx.Bold);
+
+            double startX = 50;
+            double startY = 50;
+            double colWidth = 150;
+            double rowHeight = 20;
+
+            string[] headers = { "", "Archimedes", "Motyle" };
+            string[] labels = { "algorytm", "funkcja", "ilosc wywolań funkcji celu", "populacja", "iteracje",
+                        "fitness value", "best wym. 1", "best wym. 2", "best wym. 3",
+                        "(opcjonalnie) reszta parametrów" };
+
+            string[][] values = this.string2dOfDouble2D(comparisonReportGenerator.parameters);
+            // Headers
+            for (int i = 0; i < headers.Length; i++)
+            {
+                gfx.DrawRectangle(XPens.Black, XBrushes.LightGray, startX + (i * colWidth), startY, colWidth, rowHeight);
+                gfx.DrawString(headers[i], fontBold, XBrushes.Black, startX + (i * colWidth) + 5, startY + 15);
+            }
+
+            for (int row = 0; row < labels.Length; row++)
+            {
+                // Row Titles
+                double offsetY = startY + ((row + 1) * rowHeight);
+                gfx.DrawRectangle(XPens.Black, XBrushes.White, startX, offsetY, colWidth, rowHeight);
+                gfx.DrawString(labels[row], font, XBrushes.Black, startX + 5, offsetY + 15);
+
+                // Params info values
+                for (int col = 0; col < 2; col++)
+                {
+                    double offsetX = startX + ((col + 1) * colWidth);
+                    gfx.DrawRectangle(XPens.Black, XBrushes.White, offsetX, offsetY, colWidth, rowHeight);
+                    gfx.DrawString(values[row][col], font, XBrushes.Black, offsetX + 5, offsetY + 15);
+                }
+            }
+
+            document.Save(path);
+        }
+
+        private string[][] string2dOfDouble2D(double[][] src)
+        {
+            string[][] retVal = new string[src.Length][];
+            for (int i = 0; i < src.Length; ++i)
+            {
+                for (int j = 0; j < src[i].Length; ++j)
+                {
+                    retVal[i][j] = src[i][j].ToString();
+                }
+            }
+            return retVal;
         }
 
         public string buildFloatFormat()
@@ -120,7 +187,6 @@ namespace TestServerMSI.Application.Services
         {
             return new string[] { text };
         }
-
 
         public string[] stringOfParamInfoPdf(ParamInfo paramInfo)
         {

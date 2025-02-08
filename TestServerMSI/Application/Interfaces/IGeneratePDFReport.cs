@@ -1,4 +1,6 @@
 ﻿
+using TestServerMSI.Application.Services;
+
 namespace TestServerMSI.Application.Interfaces
 {
     public interface IGeneratePDFReport
@@ -15,7 +17,7 @@ namespace TestServerMSI.Application.Interfaces
         // najlepszym osobniku wraz z wartością funkcji celu ,
         // liczbie wywołań funkcji celu ,
         // parametrach algorytmu
-        public abstract void GenerateReport(string path);
+        public abstract void GenerateReport(string path, ComparisonReportGenerator comparisonReportGenerator);
     }
 }
 

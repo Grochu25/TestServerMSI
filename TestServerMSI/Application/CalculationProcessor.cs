@@ -215,23 +215,29 @@ namespace TestServerMSI.Application
             }
         }
 
-        private void generateReports(IOptimizationAlgorithm algorithm, ITestFunction fucntion, double[] parameters)
+        private void generateReports(IOptimizationAlgorithm algorithm, ITestFunction function, double[] parameters)
         {
-            this.CurrentAlgorithm.stringReportGenerator.Alg = algorithm;
-            this.CurrentAlgorithm.stringReportGenerator.TF = fucntion;
+            // TODO REMOVE DEBUG
+            var test = new ComparisonReportGenerator(saveDirectory);
+            test.generateComparisonReport();
 
-            string filename = generateRaportName(algorithm, fucntion, parameters);
+            // TODO END
+
+            this.CurrentAlgorithm.stringReportGenerator.Alg = algorithm;
+            this.CurrentAlgorithm.stringReportGenerator.TF = function;
+
+            string filename = generateRaportName(algorithm, function, parameters);
             this.CurrentAlgorithm.stringReportGenerator.GenerateReport($"records/{saveDirectory}/{filename}.txt"); // GEN REPORT TEXT
             this.CurrentAlgorithm.pdfReportGenerator.Alg = algorithm;
-            this.CurrentAlgorithm.pdfReportGenerator.TF = fucntion;
-            this.CurrentAlgorithm.pdfReportGenerator.GenerateReport($"records/{saveDirectory}/{filename}.pdf"); // GEN REPORT PDF
+            this.CurrentAlgorithm.pdfReportGenerator.TF = function;
+            this.CurrentAlgorithm.pdfReportGenerator.GenerateReport($"records/{saveDirectory}/{filename}.pdf", test); // GEN REPORT PDF
         }
 
-        private string generateRaportName(IOptimizationAlgorithm algorithm, ITestFunction fucntion, double[] parameters)
+        private string generateRaportName(IOptimizationAlgorithm algorithm, ITestFunction function, double[] parameters)
         {
-            string filename = algorithm.Name +"_"+ fucntion.Name;
+            string filename = algorithm.Name + "_" + function.Name;
             foreach (var param in parameters)
-                filename += '_'+param.ToString();
+                filename += '_' + param.ToString();
             filename = filename.Replace(' ', '_').Replace(',', '.').Replace(':', '_');
             return filename;
         }
