@@ -217,12 +217,6 @@ namespace TestServerMSI.Application
 
         private void generateReports(IOptimizationAlgorithm algorithm, ITestFunction function, double[] parameters)
         {
-            // TODO REMOVE DEBUG
-            var test = new ComparisonReportGenerator(saveDirectory);
-            test.generateComparisonReport();
-
-            // TODO END
-
             this.CurrentAlgorithm.stringReportGenerator.Alg = algorithm;
             this.CurrentAlgorithm.stringReportGenerator.TF = function;
 
@@ -230,7 +224,7 @@ namespace TestServerMSI.Application
             this.CurrentAlgorithm.stringReportGenerator.GenerateReport($"records/{saveDirectory}/{filename}.txt"); // GEN REPORT TEXT
             this.CurrentAlgorithm.pdfReportGenerator.Alg = algorithm;
             this.CurrentAlgorithm.pdfReportGenerator.TF = function;
-            this.CurrentAlgorithm.pdfReportGenerator.GenerateReport($"records/{saveDirectory}/{filename}.pdf", test); // GEN REPORT PDF
+            this.CurrentAlgorithm.pdfReportGenerator.GenerateReport($"records/{saveDirectory}/{filename}.pdf"); // GEN REPORT PDF
         }
 
         private string generateRaportName(IOptimizationAlgorithm algorithm, ITestFunction function, double[] parameters)

@@ -17,7 +17,7 @@ namespace TestServerMSI.Application.Interfaces
         // najlepszym osobniku wraz z wartością funkcji celu ,
         // liczbie wywołań funkcji celu ,
         // parametrach algorytmu
-        public abstract void GenerateReport(string path, ComparisonReportGenerator comparisonReportGenerator);
+        public abstract void GenerateReport(string path);
     }
 }
 
