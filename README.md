@@ -12,3 +12,6 @@ Running server exposes four groups of endpoints:
 - The fourth allows checking the state, start, stop and resume calculations with:
   - one algorithm and many functions
   - one function and many algorithms
+
+## Adding own functions and algorithms
+To add new functions and algorithms with a dll file, you need to create them using IOptimizationAlgorithm and ITestFunction interfaces from the TestServerMSI/TestServerMSI/Application/Interfaces directory.
